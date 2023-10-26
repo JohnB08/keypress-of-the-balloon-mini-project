@@ -130,7 +130,7 @@ const noLife = () => {
     console.log(localStorage.getItem("highScore"));
   }
 };
-startGameBtn.addEventListener("click", (event) => {
+const gameStart = () => {
   let difficulty = difficultySelection[difficultySelector.value];
   life = difficulty.maxLife;
   maxBalloon = difficulty.maxBalloon;
@@ -161,4 +161,11 @@ startGameBtn.addEventListener("click", (event) => {
     }
     noLife();
   });
+};
+startGameBtn.addEventListener("click", (event) => {
+  gameStart();
+});
+document.addEventListener("keydown", (event) => {
+  let gameHasNotStarted = document.querySelector("button");
+  if (gameHasNotStarted) gameStart();
 });
