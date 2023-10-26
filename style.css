@@ -9,6 +9,7 @@ body {
 .ballooncontainer {
   width: 800px;
   height: 800px;
+  background-color: skyblue;
   position: relative;
 }
 .balloon {
@@ -18,5 +19,6 @@ body {
   width: 48px;
   height: 48px;
   border: 2px solid black;
+  background-color: white;
   position: absolute;
 }
