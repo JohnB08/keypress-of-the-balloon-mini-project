@@ -42,7 +42,7 @@ let highScore = 0;
 if (!localStorage.getItem("highscore")) {
   highScoreTracker.textContent = `highscore: ${highScore}`;
 } else {
-  let savedHighScore = localStorage.getItem("highScore");
+  let savedHighScore = JSON.parse(localStorage.getItem("highScore"));
   highScoreTracker.textContent = `Highscore: ${savedHighScore}`;
   highScore = number(savedHighScore);
 }
@@ -105,24 +105,23 @@ startGameBtn.addEventListener("click", (event) => {
   lifeTimer = setInterval(balloonChecker, 500);
   scoreContainer.appendChild(heartContainer);
   lifeCount();
-});
-
-document.addEventListener("keydown", (event) => {
-  let balloons = document.querySelectorAll(".balloon");
-  let letters = document.querySelectorAll("p");
-  let prevScore = score;
-  for (let i = 0; i < balloons.length; i++) {
-    if (event.code === `Key${letters[i].textContent}`) {
-      balloons[i].remove();
-      score++;
-      scoreCount.textContent = `Score: ${score}`;
+  document.addEventListener("keydown", (keyStroke) => {
+    let balloons = document.querySelectorAll(".balloon");
+    let letters = document.querySelectorAll("p");
+    let prevScore = score;
+    for (let i = 0; i < balloons.length; i++) {
+      if (keyStroke.code === `Key${letters[i].textContent}`) {
+        balloons[i].remove();
+        score++;
+        scoreCount.textContent = `Score: ${score}`;
+      }
     }
-  }
-  if (prevScore === score) {
-    let hearts = document.querySelectorAll(".heart");
-    hearts[life - 1].remove();
-    life--;
-    console.log(life);
-  }
-  noLife();
+    if (prevScore === score) {
+      let hearts = document.querySelectorAll(".heart");
+      hearts[life - 1].remove();
+      life--;
+      console.log(life);
+    }
+    noLife();
+  });
 });
