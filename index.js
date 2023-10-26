@@ -181,21 +181,8 @@ const gameStart = () => {
   balloonSpawner = setInterval(spawnBalloon, time);
   lifeTimer = setInterval(balloonChecker, time);
 };
-
-//bruker knappen for å starte spillet.
-startGameBtn.addEventListener("click", (event) => {
-  dead = false;
-  gameStart();
-});
-//legger på en event listener som input til spillet.
-document.addEventListener("keydown", (keyStroke) => {
-  if (keyStroke.code === "Enter") {
-    let hasNotStarted = document.querySelector("button");
-    if (hasNotStarted) {
-      dead = false;
-      gameStart();
-    }
-  }
+//hovedfunksjon for spillet. Skjekker om ballonger fjernes osv.
+const gameEvent = (keyStroke) => {
   if (dead) return;
   //skjekker om det finnes en balloon, og skjekker hva innholdet er.
   let balloons = document.querySelectorAll(".balloon");
@@ -216,6 +203,25 @@ document.addEventListener("keydown", (keyStroke) => {
   if (prevScore === score) {
     removeLife();
   }
-  //skjekker på slutten av eventet om man er død.
+  //skjekker på slutten av funksjonen om man er død.
   noLife();
+};
+
+//bruker knappen for å starte spillet.
+startGameBtn.addEventListener("click", (event) => {
+  dead = false;
+  gameStart();
+});
+//legger på en event listener som input til spillet.
+document.addEventListener("keydown", (keyStroke) => {
+  if (keyStroke.code === "Enter") {
+    let hasNotStarted = document.querySelector("button");
+    if (hasNotStarted) {
+      dead = false;
+      gameStart();
+    }
+  } else {
+    //legger keyStroke inn som parrameter, dermed kan keyStroke.code brukes i gameEvent.
+    gameEvent(keyStroke);
+  }
 });
