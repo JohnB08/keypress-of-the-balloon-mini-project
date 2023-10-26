@@ -84,12 +84,13 @@ let life = 5;
 let maxBalloon = 50;
 //bruker dead variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let dead = true;
+console.log(localStorage.getItem("highScore"));
 //experimenterer med å få localStorage til å virke, har ikke helt fått det til.
-if (!localStorage.getItem("highscore")) {
-  highScoreTracker.textContent = `highscore: ${highScore}`;
+if (!localStorage.getItem("highScore")) {
+  highScoreTracker.textContent = `HighScore: ${highScore}`;
 } else {
   let savedHighScore = JSON.parse(localStorage.getItem("highScore"));
-  highScoreTracker.textContent = `Highscore: ${savedHighScore}`;
+  highScoreTracker.textContent = `HighScore: ${savedHighScore}`;
   highScore = number(savedHighScore);
 }
 //spawnBalloon funksjon. Lager en firkant med tekst i, og plasserer den en tilfeldig plass i balooncontainer elementet.
