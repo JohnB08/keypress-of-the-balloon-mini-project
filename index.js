@@ -68,15 +68,45 @@ const lifeCount = () => {
     heartContainer.appendChild(heart);
   }
 };
+const balloonChecker = () => {
+  let balloons = document.querySelectorAll(".balloon");
+  console.log(balloons.length);
+  if (balloons.length > 50) {
+    let hearts = document.querySelectorAll(".heart");
+    hearts[life - 1].remove();
+    life--;
+  }
+  noLife();
+};
+const noLife = () => {
+  if (life === 0) {
+    clearInterval(balloonSpawner);
+    clearInterval(lifeTimer);
+    let ballons = document.querySelectorAll(".balloon");
+    for (let ballon of ballons) {
+      ballon.remove();
+    }
+    if (score > highScore) {
+      highScore = score;
+      localStorage.removeItem("highScore");
+      localStorage.setItem("highScore", JSON.stringify(highScore));
+      highScoreTracker.textContent = `HighScore: ${highScore}`;
+    }
+    balloonContainer.appendChild(startGameBtn);
+    console.log(localStorage.getItem("highScore"));
+  }
+};
 startGameBtn.addEventListener("click", (event) => {
   life = 5;
   score = 0;
   scoreCount.textContent = `Score: ${score}`;
   startGameBtn.remove("");
   balloonSpawner = setInterval(spawnBalloon, 500);
+  lifeTimer = setInterval(balloonChecker, 500);
   scoreContainer.appendChild(heartContainer);
   lifeCount();
 });
+
 document.addEventListener("keydown", (event) => {
   let balloons = document.querySelectorAll(".balloon");
   let letters = document.querySelectorAll("p");
@@ -94,19 +124,5 @@ document.addEventListener("keydown", (event) => {
     life--;
     console.log(life);
   }
-  if (life === 0) {
-    clearInterval(balloonSpawner);
-    let ballons = document.querySelectorAll(".balloon");
-    for (let ballon of ballons) {
-      ballon.remove();
-    }
-    if (score > highScore) {
-      highScore = score;
-      localStorage.removeItem("highScore");
-      localStorage.setItem("highScore", JSON.stringify(highScore));
-      highScoreTracker.textContent = `HighScore: ${highScore}`;
-    }
-    balloonContainer.appendChild(startGameBtn);
-    console.log(localStorage.getItem("highScore"));
-  }
+  noLife();
 });
