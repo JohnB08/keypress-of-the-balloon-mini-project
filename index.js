@@ -215,8 +215,7 @@ startGameBtn.addEventListener("click", (event) => {
 //legger på en event listener som input til spillet.
 document.addEventListener("keydown", (keyStroke) => {
   if (keyStroke.code === "Enter") {
-    let hasNotStarted = document.querySelector("button");
-    if (hasNotStarted) {
+    if (dead) {
       dead = false;
       gameStart();
     }
