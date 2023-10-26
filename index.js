@@ -91,7 +91,7 @@ if (!localStorage.getItem("highScore")) {
 } else {
   let savedHighScore = JSON.parse(localStorage.getItem("highScore"));
   highScoreTracker.textContent = `HighScore: ${savedHighScore}`;
-  highScore = number(savedHighScore);
+  highScore = savedHighScore;
 }
 //spawnBalloon funksjon. Lager en firkant med tekst i, og plasserer den en tilfeldig plass i balooncontainer elementet.
 const spawnBalloon = () => {
