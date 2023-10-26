@@ -58,6 +58,7 @@ heartContainer.classList.add("heartcontainer");
 const startGameBtn = document.createElement("button");
 startGameBtn.classList.add("btn");
 startGameBtn.textContent = "Start Game!";
+//Her Lager jeg difficultyselection + alle options. Kunne nok blitt gjort i en loop.
 const difficultySelector = document.createElement("select");
 const easyDifficulty = document.createElement("option");
 easyDifficulty.value = "0";
@@ -94,9 +95,10 @@ if (!localStorage.getItem("highscore")) {
 const spawnBalloon = () => {
   let balloon = document.createElement("div");
   balloon.classList.add("balloon");
-  //ballongene spawner med minst 5% luft mot kanten av kontaineren.
-  balloon.style.top = `${Math.floor(Math.random() * 85) + 5}%`;
-  balloon.style.left = `${Math.floor(Math.random() * 85) + 5}%`;
+  //plasserer de randomly i balloonContainer. men alltid med litt luft til kanten.
+  balloon.style.top = `${Math.floor(Math.random() * 80) + 5}%`;
+  balloon.style.left = `${Math.floor(Math.random() * 80) + 5}%`;
+  //lager innholdet i ballongen.
   let balloonLetter = document.createElement("p");
   balloonLetter.textContent =
     alphabet[Math.floor(Math.random() * alphabet.length)];
