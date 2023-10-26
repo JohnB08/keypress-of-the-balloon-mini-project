@@ -29,6 +29,8 @@ const alphabet = [
   "Y",
   "Z",
 ];
+const highScoreTracker = document.createElement("h2");
+scoreContainer.appendChild(highScoreTracker);
 const heartContainer = document.createElement("div");
 heartContainer.classList.add("heartcontainer");
 let startGameBtn = document.createElement("button");
@@ -36,6 +38,8 @@ startGameBtn.classList.add("btn");
 startGameBtn.textContent = "Start Game!";
 balloonContainer.appendChild(startGameBtn);
 let score = 0;
+let highScore = 0;
+highScoreTracker.textContent = `Highscore: ${highScore}`;
 let balloonSpawner = null;
 let life = 5;
 const spawnBalloon = () => {
@@ -61,8 +65,9 @@ const lifeCount = () => {
 startGameBtn.addEventListener("click", (event) => {
   life = 5;
   score = 0;
+  scoreCount.textContent = `Score: ${score}`;
   startGameBtn.remove("");
-  balloonSpawner = setInterval(spawnBalloon, 1500);
+  balloonSpawner = setInterval(spawnBalloon, 500);
   scoreContainer.appendChild(heartContainer);
   lifeCount();
 });
@@ -88,6 +93,10 @@ document.addEventListener("keydown", (event) => {
     let ballons = document.querySelectorAll(".balloon");
     for (let ballon of ballons) {
       ballon.remove();
+    }
+    if (score > highScore) {
+      highScore = score;
+      highScoreTracker.textContent = `HighScore: ${highScore}`;
     }
     balloonContainer.appendChild(startGameBtn);
   }
