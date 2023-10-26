@@ -39,11 +39,13 @@ startGameBtn.textContent = "Start Game!";
 balloonContainer.appendChild(startGameBtn);
 let score = 0;
 let highScore = 0;
-if (window.localStorage.getItem("highscore")) {
-  highScoreTracker.textContent = `Highscore: ${window.localStorage.getItem(
-    "highScore"
-  )}`;
-} else highScoreTracker.textContent = `highscore: ${highScore}`;
+if (!localStorage.getItem("highscore")) {
+  highScoreTracker.textContent = `highscore: ${highScore}`;
+} else {
+  let savedHighScore = localStorage.getItem("highScore");
+  highScoreTracker.textContent = `Highscore: ${savedHighScore}`;
+  highScore = number(savedHighScore);
+}
 let balloonSpawner = null;
 let life = 5;
 const spawnBalloon = () => {
@@ -100,10 +102,11 @@ document.addEventListener("keydown", (event) => {
     }
     if (score > highScore) {
       highScore = score;
-      window.localStorage.removeItem("highScore");
-      window.localStorage.setItem("highScore", JSON.stringify(highScore));
+      localStorage.removeItem("highScore");
+      localStorage.setItem("highScore", JSON.stringify(highScore));
       highScoreTracker.textContent = `HighScore: ${highScore}`;
     }
     balloonContainer.appendChild(startGameBtn);
+    console.log(localStorage.getItem("highScore"));
   }
 });
