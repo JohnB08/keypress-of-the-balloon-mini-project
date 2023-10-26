@@ -82,6 +82,7 @@ let highScore = 0;
 let balloonSpawner = null;
 let life = 5;
 let maxBalloon = 50;
+//bruker dead variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let dead = true;
 //experimenterer med å få localStorage til å virke, har ikke helt fått det til.
 if (!localStorage.getItem("highscore")) {
