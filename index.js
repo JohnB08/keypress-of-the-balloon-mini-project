@@ -29,14 +29,46 @@ const alphabet = [
   "Y",
   "Z",
 ];
+const difficultySelection = [
+  {
+    maxLife: 5,
+    time: 500,
+    maxBalloon: 50,
+  },
+  {
+    maxLife: 3,
+    time: 250,
+    maxBalloon: 50,
+  },
+  {
+    maxLife: 1,
+    time: 250,
+    maxBalloon: 25,
+  },
+];
 const highScoreTracker = document.createElement("h2");
 scoreContainer.appendChild(highScoreTracker);
 const heartContainer = document.createElement("div");
 heartContainer.classList.add("heartcontainer");
-let startGameBtn = document.createElement("button");
+const startGameBtn = document.createElement("button");
 startGameBtn.classList.add("btn");
 startGameBtn.textContent = "Start Game!";
+const difficultySelector = document.createElement("select");
+const easyDifficulty = document.createElement("option");
+easyDifficulty.value = "0";
+easyDifficulty.text = "Lett";
+difficultySelector.add(easyDifficulty);
+const mediumDifficulty = document.createElement("option");
+mediumDifficulty.value = "1";
+mediumDifficulty.text = "Medium";
+difficultySelector.add(mediumDifficulty);
+const hardDifficulty = document.createElement("option");
+hardDifficulty.value = "2";
+hardDifficulty.text = "Hard";
+difficultySelector.add(hardDifficulty);
 balloonContainer.appendChild(startGameBtn);
+balloonContainer.appendChild(difficultySelector);
+difficultySelector.classList.add("selector");
 let score = 0;
 let highScore = 0;
 if (!localStorage.getItem("highscore")) {
@@ -48,6 +80,7 @@ if (!localStorage.getItem("highscore")) {
 }
 let balloonSpawner = null;
 let life = 5;
+let maxBalloon = 50;
 const spawnBalloon = () => {
   let balloon = document.createElement("div");
   balloon.classList.add("balloon");
@@ -71,7 +104,7 @@ const lifeCount = () => {
 const balloonChecker = () => {
   let balloons = document.querySelectorAll(".balloon");
   console.log(balloons.length);
-  if (balloons.length > 50) {
+  if (balloons.length > maxBalloon) {
     let hearts = document.querySelectorAll(".heart");
     hearts[life - 1].remove();
     life--;
@@ -93,18 +126,22 @@ const noLife = () => {
       highScoreTracker.textContent = `HighScore: ${highScore}`;
     }
     balloonContainer.appendChild(startGameBtn);
+    balloonContainer.appendChild(difficultySelector);
     console.log(localStorage.getItem("highScore"));
   }
 };
 startGameBtn.addEventListener("click", (event) => {
-  life = 5;
+  let difficulty = difficultySelection[difficultySelector.value];
+  life = difficulty.maxLife;
+  maxBalloon = difficulty.maxBalloon;
   score = 0;
   scoreCount.textContent = `Score: ${score}`;
-  startGameBtn.remove("");
-  balloonSpawner = setInterval(spawnBalloon, 500);
-  lifeTimer = setInterval(balloonChecker, 500);
+  startGameBtn.remove();
+  balloonSpawner = setInterval(spawnBalloon, difficulty.time);
+  lifeTimer = setInterval(balloonChecker, difficulty.time);
   scoreContainer.appendChild(heartContainer);
   lifeCount();
+  difficultySelector.remove();
   document.addEventListener("keydown", (keyStroke) => {
     let balloons = document.querySelectorAll(".balloon");
     let letters = document.querySelectorAll("p");
