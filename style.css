@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  display: grid;
+  place-content: center;
+}
+.ballooncontainer {
+  width: 500px;
+  height: 500px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.balloon {
+  width: 20px;
+  height: 20px;
+  border: 2px solid black;
+}
