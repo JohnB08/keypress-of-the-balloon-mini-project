@@ -78,6 +78,7 @@ difficultySelector.classList.add("selector");
 
 //predefinerer variabler jeg trenger til spillet.
 let score = 0;
+scoreCount.textContent = `Score: ${score}`;
 let highScore = 0;
 let balloonSpawner = null;
 let life = 5;
