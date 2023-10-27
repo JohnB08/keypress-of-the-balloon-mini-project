@@ -1,7 +1,18 @@
 //Henter inn fra HTML det jeg trenger.
 const scoreContainer = document.querySelector(".scorecontainer");
+
 const scoreCount = document.querySelector(".scorecontainer h1");
+
 const balloonContainer = document.querySelector(".ballooncontainer");
+
+const highScoreTracker = document.createElement("h2");
+
+const heartContainer = document.createElement("div");
+
+const startGameBtn = document.createElement("button");
+
+const difficultySelector = document.createElement("select");
+
 //Lager array av hele alfabetet på engelsk.
 const alphabet = [
   "A",
@@ -35,45 +46,51 @@ const alphabet = [
 const difficultySelection = [
   {
     maxLife: 5,
+    time: 1000,
+    maxBalloon: 50,
+    text: "Easy",
+  },
+  {
+    maxLife: 5,
     time: 500,
     maxBalloon: 50,
+    text: "Medium",
   },
   {
     maxLife: 3,
     time: 250,
     maxBalloon: 50,
+    text: "Hard",
   },
   {
     maxLife: 1,
     time: 250,
     maxBalloon: 25,
+    text: "Very Hard",
   },
 ];
 
-//Lager alle elementene jeg trenger for å kjøre spillet.
-const highScoreTracker = document.createElement("h2");
+//Her Lager jeg difficultyselection + alle options i en loop.
+for (let i = 0; i < difficultySelection.length; i++) {
+  let option = document.createElement("option");
+  option.value = i;
+  option.text = difficultySelection[i].text;
+  difficultySelector.add(option);
+}
+
+//Appender det som skal appendes.
 scoreContainer.appendChild(highScoreTracker);
-const heartContainer = document.createElement("div");
+
+scoreContainer.appendChild(heartContainer);
+
+showMenu();
+
 heartContainer.classList.add("heartcontainer");
-const startGameBtn = document.createElement("button");
+
 startGameBtn.classList.add("btn");
+
 startGameBtn.textContent = "Start Game!";
-//Her Lager jeg difficultyselection + alle options. Kunne nok blitt gjort i en loop.
-const difficultySelector = document.createElement("select");
-const easyDifficulty = document.createElement("option");
-easyDifficulty.value = "0";
-easyDifficulty.text = "Lett";
-difficultySelector.add(easyDifficulty);
-const mediumDifficulty = document.createElement("option");
-mediumDifficulty.value = "1";
-mediumDifficulty.text = "Medium";
-difficultySelector.add(mediumDifficulty);
-const hardDifficulty = document.createElement("option");
-hardDifficulty.value = "2";
-hardDifficulty.text = "Hard";
-difficultySelector.add(hardDifficulty);
-balloonContainer.appendChild(startGameBtn);
-balloonContainer.appendChild(difficultySelector);
+
 difficultySelector.classList.add("selector");
 
 //predefinerer variabler jeg trenger til spillet.
@@ -83,8 +100,8 @@ let highScore = 0;
 let balloonSpawner = null;
 let life = 5;
 let maxBalloon = 50;
-//bruker dead variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
-let dead = true;
+//bruker disabled variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
+let disabled = true;
 console.log(localStorage.getItem("highScore"));
 //experimenterer med å få localStorage til å virke, har ikke helt fått det til.
 if (!localStorage.getItem("highScore")) {
@@ -154,10 +171,8 @@ const noLife = () => {
       highScoreTracker.textContent = `HighScore: ${highScore}`;
     }
     //resetter knapp og difficulty selection.
-    balloonContainer.appendChild(startGameBtn);
-    balloonContainer.appendChild(difficultySelector);
-    console.log(localStorage.getItem("highScore"));
-    dead = true;
+    showMenu();
+    disabled = true;
   }
 };
 function reset() {
@@ -168,11 +183,14 @@ function reset() {
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
 }
+function showStart() {
+  balloonContainer.appendChild(startGameBtn);
+  balloonContainer.appendChild(difficultySelector);
+}
 //denne funksjonen kjører når spillet starter.
 const gameStart = () => {
   reset();
   //setter life, time og maxballoons til det som er bestemt av vanskelighetsgraden
-  scoreContainer.appendChild(heartContainer);
   lifeCount();
   //fjerner startknappen og difficulty selector
   startGameBtn.remove();
@@ -186,7 +204,7 @@ const gameStart = () => {
 };
 //hovedfunksjon for spillet. Skjekker om ballonger fjernes osv.
 const gameEvent = (keyStroke) => {
-  if (dead) return;
+  if (disabled) return;
   //skjekker om det finnes en balloon, og skjekker hva innholdet er.
   let balloons = document.querySelectorAll(".balloon");
   let letters = document.querySelectorAll("p");
@@ -212,14 +230,14 @@ const gameEvent = (keyStroke) => {
 
 //bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
-  dead = false;
+  disabled = false;
   gameStart();
 });
 //legger på en event listener som input til spillet.
 document.addEventListener("keydown", (keyStroke) => {
   if (keyStroke.code === "Enter") {
-    if (dead) {
-      dead = false;
+    if (disabled) {
+      disabled = false;
       gameStart();
     }
   } else {
