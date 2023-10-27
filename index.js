@@ -42,7 +42,7 @@ const alphabet = [
   "Y",
   "Z",
 ];
-//lager et objektarray for vanskelighetsgrad.
+//lager et objektarray for vanskelighetsgrad. Ved å legge til et nytt objekt her, legges en ny vanskelighetsgrad til automatisk.
 const difficultySelection = [
   {
     maxLife: 5,
@@ -153,14 +153,15 @@ const balloonChecker = () => {
 };
 //denne funksjonen kjører kunn når life har blitt 0
 const noLife = () => {
-  if (life === 0) {
+  if (life !== 0) return;
+  else {
     //her stopper jeg begge intervallene.
     clearInterval(balloonSpawner);
     clearInterval(lifeTimer);
     //jeg fjerner alle balloon
-    let ballons = document.querySelectorAll(".balloon");
-    for (let ballon of ballons) {
-      ballon.remove();
+    let balloons = document.querySelectorAll(".balloon");
+    for (let balloon of balloons) {
+      balloon.remove();
     }
     //skjekker om det er kommet en ny high score.
     if (score > highScore) {
@@ -183,7 +184,7 @@ function reset() {
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
 }
-function showStart() {
+function showMenu() {
   balloonContainer.appendChild(startGameBtn);
   balloonContainer.appendChild(difficultySelector);
 }
@@ -209,7 +210,6 @@ const gameEvent = (keyStroke) => {
   let balloons = document.querySelectorAll(".balloon");
   let letters = document.querySelectorAll("p");
   //lager en prevScore variabel jeg bruker senere å se om score går opp.
-  let prevScore = score;
   //lager en loop som looper gjennom alle balloons som finnes når en knapp blir trykket.
   for (let i = 0; i < balloons.length; i++) {
     //skjekker om knappen som ble trykket i eventet ovenfor er ligt .code til tastaturknappene til bokstaver.
@@ -218,12 +218,10 @@ const gameEvent = (keyStroke) => {
       balloons[i].remove();
       score++;
       scoreCount.textContent = `Score: ${score}`;
+      return;
     }
   }
-  //hvis en knapp blir trykket på, men score ikke har endra seg, så blir et liv fjerna.
-  if (prevScore === score) {
-    removeLife();
-  }
+  removeLife();
   //skjekker på slutten av funksjonen om man er død.
   noLife();
 };
