@@ -100,7 +100,6 @@ let life = 5;
 let maxBalloon = 50;
 //bruker stopped variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let stopped = true;
-console.log(localStorage.getItem("highScore"));
 
 //prøver å hente highscore fra local storage.
 //experimenterer med å få localStorage til å virke, har ikke helt fått det til.
@@ -162,7 +161,6 @@ const removeLife = () => {
   let hearts = document.querySelectorAll(".heart");
   hearts[life - 1].remove();
   life--;
-  console.log(life);
 };
 //Skjekker hvor mange balloons som er laget, og fjerner liv hvis antallet går over et treshhold.
 const balloonChecker = () => {
@@ -200,8 +198,6 @@ const noLife = () => {
 };
 function reset() {
   let difficulty = difficultySelection[difficultySelector.value];
-  console.log(difficultySelector.value);
-  console.log(difficulty.maxLife);
   life = difficulty.maxLife;
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
