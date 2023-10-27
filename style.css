@@ -88,6 +88,4 @@ body {
 }
 .selector:hover {
   cursor: pointer;
-  background: green;
-  color: white;
 }
