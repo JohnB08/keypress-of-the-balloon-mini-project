@@ -48,15 +48,15 @@ body {
   animation: poppedBalloon 1s ease-in-out;
 }
 @keyframes poppedBalloon {
-  0% {
-    transform: translateY(50px);
-  }
-  25% {
+  10% {
     transform: translateY(-50px);
   }
   50% {
     opacity: 0%;
+    background-color: red;
+    color: white;
     transform: translateY(200px);
+    transform: rotate(90deg);
   }
 }
 .selector {

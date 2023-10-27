@@ -162,6 +162,13 @@ const removeLife = () => {
   hearts[life - 1].remove();
   life--;
 };
+const saveHighScore = () => {
+  //arrow functions har implied return når de er ferdig.
+  highScore = score;
+  localStorage.removeItem("highScore");
+  localStorage.setItem("highScore", JSON.stringify(highScore));
+  highScoreTracker.textContent = `HighScore: ${highScore}`;
+};
 //Skjekker hvor mange balloons som er laget, og fjerner liv hvis antallet går over et treshhold.
 const balloonChecker = () => {
   let balloons = document.querySelectorAll(".balloon");
@@ -184,13 +191,7 @@ const noLife = () => {
       balloon.remove();
     }
     //skjekker om det er kommet en ny high score.
-    if (score > highScore) {
-      highScore = score;
-      //igjen har ikke fått localStorage til å virke
-      localStorage.removeItem("highScore");
-      localStorage.setItem("highScore", JSON.stringify(highScore));
-      highScoreTracker.textContent = `HighScore: ${highScore}`;
-    }
+    if (score > highScore) saveHighScore();
     //resetter knapp og difficulty selection.
     showMenu();
     stopped = true;
