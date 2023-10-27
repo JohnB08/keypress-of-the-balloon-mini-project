@@ -138,11 +138,13 @@ const spawnBalloon = () => {
 };
 
 //ved å gjøre balloon animation async, så kan balloonRemover "promise" en "resolve" før balloonAnimation er ferdig.
+//tar inn en ballong som parrameter.
 async function balloonAnimation(balloon) {
   balloon.classList.add("popped");
   score++;
   scoreCount.textContent = `Score: ${score}`;
   //her setter eg await balloonRemover, sånn at funksjonen "pauses" til balloonRemover sender "resolve"
+  //sender samme ballongen videre inn i balloonRemover.
   await balloonRemover(balloon);
   return;
 }
@@ -245,13 +247,11 @@ function gameEvent(keyStroke) {
   //skjekker om det finnes en balloon, og skjekker hva innholdet er.
   let balloons = document.querySelectorAll(".balloon");
   let letters = document.querySelectorAll("p");
-  //lager en prevScore variabel jeg bruker senere å se om score går opp.
   //lager en loop som looper gjennom alle balloons som finnes når en knapp blir trykket.
   for (let i = 0; i < balloons.length; i++) {
     //skjekker om knappen som ble trykket i eventet ovenfor er ligt .code til tastaturknappene til bokstaver.
     if (keyStroke.code === `Key${letters[i].textContent}`) {
-      //endringer hvis dette stemmer, fjerner balloon dette stemmer for, og score går opp.
-      //disse to gjør ingenting enda.
+      //sender ballongen statementen over finner inn i balloonAnimation
       balloonAnimation(balloons[i]);
       return;
     }
