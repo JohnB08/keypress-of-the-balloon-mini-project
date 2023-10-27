@@ -43,6 +43,11 @@ body {
   background: green;
   color: snow;
 }
+.btn:focus,
+.selector:focus {
+  outline: 0;
+  box-shadow: 4px 4px 0 black;
+}
 .balloon {
   display: flex;
   justify-content: center;
@@ -79,7 +84,10 @@ body {
   border-radius: 1em;
   font-size: 24px;
   font-family: inherit;
+  transition: 300ms ease-in-out;
 }
 .selector:hover {
   cursor: pointer;
+  background: green;
+  color: white;
 }
