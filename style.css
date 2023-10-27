@@ -44,6 +44,20 @@ body {
   background-color: white;
   position: absolute;
 }
+.popped {
+  animation: poppedBalloon 1s ease-in-out;
+}
+@keyframes poppedBalloon {
+  0% {
+    transform: translateY(50px);
+  }
+  25% {
+    transform: translateY(-50px);
+  }
+  50% {
+    transform: translateY(800px);
+  }
+}
 .selector {
   padding: 0.5em 1em;
   background: snow;

@@ -101,6 +101,7 @@ let highScore = 0;
 let balloonSpawner = null;
 let life = 5;
 let maxBalloon = 50;
+let done = false;
 //bruker disabled variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let disabled = true;
 console.log(localStorage.getItem("highScore"));
@@ -129,6 +130,17 @@ const spawnBalloon = () => {
   balloonContainer.appendChild(balloon);
   //legger bokstaven inn i balloon
   balloon.appendChild(balloonLetter);
+};
+
+//working on animations for when correct is pressed.
+function balloonAnimation(balloon) {
+  balloon.classList.add("popped");
+  score++;
+  scoreCount.textContent = `Score: ${score}`;
+  balloonRemover(balloon);
+}
+const balloonRemover = (balloon) => {
+  balloon.remove();
 };
 
 //Displayer hjerteSVG over balooncontainer basert på hvor mange liv man starter med.
@@ -209,7 +221,7 @@ const gameStart = () => {
   lifeTimer = setInterval(balloonChecker, time);
 };
 //hovedfunksjon for spillet. Skjekker om ballonger fjernes osv.
-const gameEvent = (keyStroke) => {
+function gameEvent(keyStroke) {
   if (disabled) return;
   //skjekker om det finnes en balloon, og skjekker hva innholdet er.
   let balloons = document.querySelectorAll(".balloon");
@@ -220,16 +232,15 @@ const gameEvent = (keyStroke) => {
     //skjekker om knappen som ble trykket i eventet ovenfor er ligt .code til tastaturknappene til bokstaver.
     if (keyStroke.code === `Key${letters[i].textContent}`) {
       //endringer hvis dette stemmer, fjerner balloon dette stemmer for, og score går opp.
-      balloons[i].remove();
-      score++;
-      scoreCount.textContent = `Score: ${score}`;
+      //disse to gjør ingenting enda.
+      balloonAnimation(balloons[i]);
       return;
     }
   }
   removeLife();
   //skjekker på slutten av funksjonen om man er død.
   noLife();
-};
+}
 
 //bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
