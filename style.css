@@ -5,14 +5,16 @@
 body {
   display: grid;
   place-content: center;
+  padding-top: 5%;
+  font-family: "Ubuntu", sans-serif;
 }
 .scorecontainer {
   display: flex;
   justify-content: space-between;
 }
 .ballooncontainer {
-  width: 800px;
-  height: 800px;
+  width: 80vw;
+  height: 90vh;
   background-color: skyblue;
   position: relative;
   display: grid;
@@ -33,6 +35,13 @@ body {
   border: 0;
   background: snow;
   border-radius: 1em;
+  font-family: inherit;
+  transition: 300ms ease-in-out;
+}
+.btn:hover {
+  cursor: pointer;
+  background: green;
+  color: snow;
 }
 .balloon {
   display: flex;
@@ -41,20 +50,24 @@ body {
   width: 48px;
   height: 48px;
   border: 2px solid black;
-  background-color: white;
+  border-radius: 50%;
+  background: radial-gradient(circle at 0%, snow 66%, grey);
   position: absolute;
+  font-weight: bold;
 }
+
 .popped {
   animation: poppedBalloon 1s ease-in-out;
 }
 @keyframes poppedBalloon {
   10% {
     transform: translateY(-50px);
-  }
-  50% {
-    opacity: 0%;
-    background-color: red;
+    background: red;
     color: white;
+  }
+  40% {
+    opacity: 0%;
+
     transform: translateY(200px);
     transform: rotate(90deg);
   }
@@ -65,4 +78,8 @@ body {
   border: 0;
   border-radius: 1em;
   font-size: 24px;
+  font-family: inherit;
+}
+.selector:hover {
+  cursor: pointer;
 }
