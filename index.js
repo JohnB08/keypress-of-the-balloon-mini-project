@@ -47,25 +47,25 @@ const difficultySelection = [
   {
     maxLife: 5,
     time: 1000,
-    maxBalloon: 50,
+    maxBalloon: 25,
     text: "Easy",
   },
   {
     maxLife: 5,
     time: 500,
-    maxBalloon: 50,
+    maxBalloon: 25,
     text: "Medium",
   },
   {
     maxLife: 3,
     time: 250,
-    maxBalloon: 50,
+    maxBalloon: 25,
     text: "Hard",
   },
   {
     maxLife: 1,
     time: 250,
-    maxBalloon: 25,
+    maxBalloon: 10,
     text: "Very Hard",
   },
 ];
