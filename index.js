@@ -101,9 +101,8 @@ let highScore = 0;
 let balloonSpawner = null;
 let life = 5;
 let maxBalloon = 50;
-let done = false;
-//bruker disabled variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
-let disabled = true;
+//bruker stopped variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
+let stopped = true;
 console.log(localStorage.getItem("highScore"));
 
 //prøver å hente highscore fra local storage.
@@ -199,7 +198,7 @@ const noLife = () => {
     }
     //resetter knapp og difficulty selection.
     showMenu();
-    disabled = true;
+    stopped = true;
   }
 };
 function reset() {
@@ -231,7 +230,7 @@ const gameStart = () => {
 };
 //hovedfunksjon for spillet. Skjekker om ballonger fjernes osv.
 function gameEvent(keyStroke) {
-  if (disabled) return;
+  if (stopped) return;
   //skjekker om det finnes en balloon, og skjekker hva innholdet er.
   let balloons = document.querySelectorAll(".balloon");
   let letters = document.querySelectorAll("p");
@@ -253,15 +252,15 @@ function gameEvent(keyStroke) {
 
 //bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
-  disabled = false;
+  stopped = false;
   gameStart();
 });
 //legger på en event listener som input til spillet.
 document.addEventListener("keydown", (keyStroke) => {
   if (keyStroke.code === "Enter") {
-    //bruker disabled her for å passe på at enter tasten ikke influerer spillet.
-    if (disabled) {
-      disabled = false;
+    //bruker stopped her for å passe på at enter tasten ikke influerer spillet.
+    if (stopped) {
+      stopped = false;
       gameStart();
     }
   } else {
