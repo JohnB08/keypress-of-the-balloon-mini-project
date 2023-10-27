@@ -72,10 +72,7 @@ const difficultySelection = [
 
 //Her Lager jeg difficultyselection + alle options i en loop.
 for (let i = 0; i < difficultySelection.length; i++) {
-  let option = document.createElement("option");
-  option.value = i;
-  option.text = difficultySelection[i].text;
-  difficultySelector.add(option);
+  difficultySelector.innerHTML += `<option value="${i}">${difficultySelection[i].text}</option>`;
 }
 
 //Appender det som skal appendes.
