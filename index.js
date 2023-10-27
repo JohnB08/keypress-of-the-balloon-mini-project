@@ -104,6 +104,8 @@ let maxBalloon = 50;
 //bruker disabled variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let disabled = true;
 console.log(localStorage.getItem("highScore"));
+
+//prøver å hente highscore fra local storage.
 //experimenterer med å få localStorage til å virke, har ikke helt fått det til.
 if (!localStorage.getItem("highScore")) {
   highScoreTracker.textContent = `HighScore: ${highScore}`;
@@ -123,7 +125,9 @@ const spawnBalloon = () => {
   let balloonLetter = document.createElement("p");
   balloonLetter.textContent =
     alphabet[Math.floor(Math.random() * alphabet.length)];
+  //legger balloon inn i ballooncontainer
   balloonContainer.appendChild(balloon);
+  //legger bokstaven inn i balloon
   balloon.appendChild(balloonLetter);
 };
 
@@ -152,7 +156,7 @@ const balloonChecker = () => {
   //kjører no-life for å se om man er død.
   noLife();
 };
-//denne funksjonen kjører kunn når life har blitt 0
+//denne funksjonen kjører kun når life har blitt 0
 const noLife = () => {
   if (life !== 0) return;
   else {
