@@ -132,16 +132,19 @@ const spawnBalloon = () => {
   balloon.appendChild(balloonLetter);
 };
 
-//working on animations for when correct is pressed.
+//ved å gjøre balloon animation async, så kan balloonRemover "promise" en "resolve" før balloonAnimation er ferdig.
 async function balloonAnimation(balloon) {
   balloon.classList.add("popped");
   score++;
   scoreCount.textContent = `Score: ${score}`;
+  //her setter eg await balloonRemover, sånn at funksjonen "pauses" til balloonRemover sender "resolve"
   await balloonRemover(balloon);
   return;
 }
+//balloonRemover funksjonen sender et "promise to resolve" ut sånn at balloonAnimation vet når setTimeout er ferdig.
 balloonRemover = (balloon) => {
   new Promise((resolve) => {
+    //set timeout som arrow function sånn at eg kan ha flere argumenter som skal bli kjørt når delayet er over.
     setTimeout(() => {
       balloon.remove();
       resolve();
