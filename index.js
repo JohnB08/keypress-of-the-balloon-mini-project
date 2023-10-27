@@ -85,6 +85,7 @@ scoreContainer.appendChild(heartContainer);
 
 showMenu();
 
+//adder styling til det som trenger styling.
 heartContainer.classList.add("heartcontainer");
 
 startGameBtn.classList.add("btn");
@@ -234,6 +235,7 @@ startGameBtn.addEventListener("click", (event) => {
 //legger på en event listener som input til spillet.
 document.addEventListener("keydown", (keyStroke) => {
   if (keyStroke.code === "Enter") {
+    //bruker disabled her for å passe på at enter tasten ikke influerer spillet.
     if (disabled) {
       disabled = false;
       gameStart();
