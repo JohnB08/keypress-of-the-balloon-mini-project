@@ -133,14 +133,20 @@ const spawnBalloon = () => {
 };
 
 //working on animations for when correct is pressed.
-function balloonAnimation(balloon) {
+async function balloonAnimation(balloon) {
   balloon.classList.add("popped");
   score++;
   scoreCount.textContent = `Score: ${score}`;
-  balloonRemover(balloon);
+  await balloonRemover(balloon);
+  return;
 }
-const balloonRemover = (balloon) => {
-  balloon.remove();
+balloonRemover = (balloon) => {
+  new Promise((resolve) => {
+    setTimeout(() => {
+      balloon.remove();
+      resolve();
+    }, 300);
+  });
 };
 
 //Displayer hjerteSVG over balooncontainer basert på hvor mange liv man starter med.

@@ -55,7 +55,8 @@ body {
     transform: translateY(-50px);
   }
   50% {
-    transform: translateY(800px);
+    opacity: 0%;
+    transform: translateY(200px);
   }
 }
 .selector {
