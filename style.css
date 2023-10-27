@@ -8,10 +8,12 @@ body {
   padding-top: 5%;
   font-family: "Ubuntu", sans-serif;
 }
+/* display flex of space-between sånn at hjertet, score og highscore er fordelt.  */
 .scorecontainer {
   display: flex;
   justify-content: space-between;
 }
+/* ballongcontaineren, setter display grid og place content senter sånn at knappen og select alltid havner midt i boksen. */
 .ballooncontainer {
   width: 80vw;
   height: 90vh;
@@ -25,10 +27,12 @@ body {
   display: flex;
   gap: 10px;
 }
+/* fast størrelse for hjertebildet. */
 .heart {
   width: 48px;
   height: 48px;
 }
+/* styling til knappen som blir laget i JS */
 .btn {
   font-size: 48px;
   padding: 0.5em 1em;
@@ -48,10 +52,11 @@ body {
   outline: 0;
   box-shadow: 4px 4px 0 black;
 }
+/* styling til ballongene, display grid, sånn at bokstavene kommer i senter. */
 .balloon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-content: center;
+  font-size: 24px;
   width: 48px;
   height: 48px;
   border: 2px solid black;
@@ -60,7 +65,7 @@ body {
   position: absolute;
   font-weight: bold;
 }
-
+/* class som blir applied til ballongene når de "popper" */
 .popped {
   animation: poppedBalloon 1s ease-in-out;
 }
