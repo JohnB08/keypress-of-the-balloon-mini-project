@@ -104,7 +104,7 @@ let maxBalloon = 0;
 //bruker stopped variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let stopped = true;
 let totalBalloonCount = 0;
-//Lager et tomt object som jeg kan fylle med key/value pairs for å se om en bokstav er spawnet eller ikke.
+//Lager et tomt object som jeg kan fylle med key/value pairs for å se om en bokstav er spawnet eller ikke, samt hente elementet senere for å fjerne det fra .ballooncontainer.
 let spawnedBalloon = {};
 
 //Funksjon som lager element, tar in to ting:
@@ -172,16 +172,15 @@ const spawnBalloon = () => {
   balloonContainer.appendChild(balloon);
   totalBalloonCount++;
   //Lager en if else, for å se om balloon med bokstav er blitt spawnet allerede.
-  //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite,
-  //men trenger ikke kjøre document.querySelectorAll før jeg faktisk må fjerne et html element.
+  //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite
+  //uten å måtte querySelectorAll etter .balloon classen som tidligere.
   if (!spawnedBalloon[balloon.textContent]) {
-    //lager et object, i spawnedBalloon for denne bokstaven. Sender inn en count, som er antallet balloons av denne typen,
-    //pluss elementet inn i et array av alle hittil spawna.
+    //lager et object, i spawnedBalloon for denne bokstaven. Sender inn et element som er et Array av alle elementer hittil spawnet.
     spawnedBalloon[balloon.textContent] = {
       balloonElements: [balloon],
     };
   } else {
-    //hvis objectet allerede er spawnet, setter eg exists til true, og inkrementer count.
+    //hvis objectet allerede er spawnet, pusher jeg det nye elementet til balloonElements Arrayet.
     spawnedBalloon[balloon.textContent].balloonElements.push(balloon);
   }
 };
