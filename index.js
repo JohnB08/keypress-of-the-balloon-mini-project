@@ -1,4 +1,4 @@
-//Henter inn fra HTML det jeg trenger.
+//Henter inn eller lager de få statiske HTML elementene jeg trenger.
 const scoreContainer = document.querySelector(".scorecontainer");
 
 const scoreCount = document.querySelector(".scorecontainer h1");
@@ -92,21 +92,30 @@ startGameBtn.textContent = "Start Game!";
 difficultySelector.classList.add("selector");
 
 //predefinerer variabler jeg trenger til spillet.
+const baseValues = {
+  score: 0,
+  highScore: 0,
+  balloonSpawner: null,
+  lifeTimer: null,
+  life: 5,
+  maxBalloon: 0,
+  stopped: true,
+  totalBalloonCount: 0,
+  spawnedBalloon: {},
+  currentHearts: [],
+};
 //Gir alle "default" verdier så de blir lastet inn i memory.
-let score = 0;
-scoreCount.textContent = `Score: ${score}`;
-let highScore = 0;
-//Prefedinerer timerene mine i memory.
-let balloonSpawner = null;
-let lifeTimer = null;
-let life = 5;
-let maxBalloon = 0;
-//bruker stopped variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
-let stopped = true;
-let totalBalloonCount = 0;
-//Lager et tomt object som jeg kan fylle med key/value pairs for å se om en bokstav er spawnet eller ikke, samt hente elementet senere for å fjerne det fra .ballooncontainer.
-let spawnedBalloon = {};
-
+//bruker Object.entries + forEach for a lage et array av hvert object.
+score = baseValues.score;
+highScore = baseValues.highScore;
+balloonSpawner = baseValues.balloonSpawner;
+lifeTimer = baseValues.lifeTimer;
+life = baseValues.life;
+maxBalloon = baseValues.maxBalloon;
+stopped = baseValues.stopped;
+totalBalloonCount = baseValues.totalBalloonCount;
+spawnedBalloon = baseValues.spawnedBalloon;
+currentHearts = baseValues.currentHearts;
 //Funksjon som lager element, tar in to ting:
 //string som er hvilken type element, og et object array med propertynavn -> property value.
 const makeElement = (type, properties) => {
@@ -144,10 +153,8 @@ if (!localStorage.getItem("highScore")) {
   highScore = savedHighScore;
 }
 
-//sammenligner score og highscore, printer ny highscore hvis den finner.
-//bruker denne funksjonen på slutten av spillet.
+//Lagrer ny highscore i localstorage hvis det har skjedd.
 const saveHighScore = () => {
-  //arrow functions har implied return når de er ferdig.
   highScore = score;
   localStorage.removeItem("highScore");
   localStorage.setItem("highScore", JSON.stringify(highScore));
@@ -213,6 +220,7 @@ balloonRemover = (balloon) => {
 const lifeCount = () => {
   for (let i = 0; i < life; i++) {
     let heart = makeElement("img", { src: "./img/life.svg" });
+    currentHearts.push(heart);
     heart.classList.add("heart");
     heartContainer.appendChild(heart);
   }
@@ -221,9 +229,10 @@ const lifeCount = () => {
 //funksjon som fjerner liv og hjerter.
 const removeLife = () => {
   //finner alle hjerteikonene som er igjen.
-  let hearts = document.querySelectorAll(".heart");
+  let hearts = currentHearts;
   //fjerner en av de.
-  hearts[life - 1].remove();
+  hearts[0].remove();
+  hearts.shift();
   life--;
   //skjekker om vi har tapt.
   if (life === 0) noLife();
@@ -259,14 +268,14 @@ function reset() {
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
   //resetter score og totalBalloonCount til 0
-  score = 0;
-  totalBalloonCount = 0;
-  scoreCount.textContent = `Score: ${score}`;
+  score = baseValues.score;
+  totalBalloonCount = baseValues.totalBalloonCount;
+  scoreCount.textContent = `Score: ${baseValues.score}`;
   //starter balloonspawner og den som skjekker anntallet balloons.
   balloonSpawner = setInterval(spawnBalloon, time);
   lifeTimer = setInterval(balloonChecker, time);
   //tømmer spawnedBalloon objektet.
-  spawnedBalloon = {};
+  spawnedBalloon = baseValues.spawnedBalloon;
 }
 
 //setter knapp og select inn på skjermen.
