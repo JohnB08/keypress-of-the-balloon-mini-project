@@ -176,10 +176,9 @@ const spawnBalloon = () => {
   //men trenger ikke kjøre document.querySelectorAll før jeg faktisk må fjerne et html element.
   if (!spawnedBalloon[balloon.textContent]) {
     //lager et object, i spawnedBalloon for denne bokstaven.
-    spawnedBalloon[balloon.textContent] = { exists: true, count: 1 };
+    spawnedBalloon[balloon.textContent] = { count: 1 };
   } else {
     //hvis objectet allerede er spawnet, setter eg exists til true, og inkrementer count.
-    spawnedBalloon[balloon.textContent].exists = true;
     spawnedBalloon[balloon.textContent].count++;
   }
 };
@@ -305,14 +304,12 @@ const balloonSelector = (letter) => {
 function gameEvent(keyStroke) {
   let letter = keyStroke.key.toUpperCase();
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
-  if (!spawnedBalloon[letter] || !spawnedBalloon[letter].exists) {
+  if (!spawnedBalloon[letter] || !spawnedBalloon[letter].count) {
     removeLife();
     return;
   } else {
     //siden balloonSelector fjerner alle balloons med den bokstaven, sier jeg at de nå er vekk.
     spawnedBalloon[letter].count--;
-    if (spawnedBalloon[letter].count === 0)
-      spawnedBalloon[letter].exists = false;
     balloonSelector(letter);
   }
 }
