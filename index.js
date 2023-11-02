@@ -58,15 +58,21 @@ const difficultySelection = [
   },
   {
     maxLife: 3,
-    time: 350,
+    time: 500,
     maxBalloon: 25,
     text: "Hard",
   },
   {
+    maxLife: 3,
+    time: 350,
+    maxBalloon: 25,
+    text: "Very Hard",
+  },
+  {
     maxLife: 1,
     time: 350,
-    maxBalloon: 10,
-    text: "Very Hard",
+    maxBalloon: 25,
+    text: "Apocalypse Mode",
   },
 ];
 
@@ -250,7 +256,7 @@ function gameEvent(keyStroke) {
   //lager en loop som looper gjennom alle balloons som finnes når en knapp blir trykket.
   for (let i = 0; i < balloons.length; i++) {
     //skjekker om knappen som ble trykket i eventet ovenfor er ligt .code til tastaturknappene til bokstaver.
-    if (keyStroke.code === `Key${letters[i].textContent}`) {
+    if (keyStroke.key === `${letters[i].textContent.toLowerCase()}`) {
       //sender ballongen statementen over finner inn i balloonAnimation
       balloonAnimation(balloons[i]);
       return;
