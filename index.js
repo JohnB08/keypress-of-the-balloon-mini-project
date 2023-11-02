@@ -175,11 +175,14 @@ const spawnBalloon = () => {
   //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite,
   //men trenger ikke kjøre document.querySelectorAll før jeg faktisk må fjerne et html element.
   if (!spawnedBalloon[balloon.textContent]) {
-    //lager et object, i spawnedBalloon for denne bokstaven.
-    spawnedBalloon[balloon.textContent] = { count: 1 };
+    //lager et object, i spawnedBalloon for denne bokstaven. Sender inn en count, som er antallet balloons av denne typen,
+    //pluss elementet inn i et array av alle hittil spawna.
+    spawnedBalloon[balloon.textContent] = {
+      balloonElements: [balloon],
+    };
   } else {
     //hvis objectet allerede er spawnet, setter eg exists til true, og inkrementer count.
-    spawnedBalloon[balloon.textContent].count++;
+    spawnedBalloon[balloon.textContent].balloonElements.push(balloon);
   }
 };
 
@@ -289,27 +292,29 @@ const gameStart = () => {
 };
 //funksjon som kjøres hvis en balloon er funnet.
 const balloonSelector = (letter) => {
-  //Jeg vil bare fjerne en og en balloon, vet ikke om det er noen annen måte å gjøre det på, siden balloons er en nodeList. .find fungerer ikke så vidt jeg vet.
-  let balloons = document.querySelectorAll(".balloon");
-  for (let i = 0; i < balloons.length; i++) {
-    if (balloons[i].textContent === letter) {
-      balloonAnimation(balloons[i]);
-      totalBalloonCount--;
-      return;
-    }
-  }
+  //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i spawnedBalloon objectet.
+  let balloons = spawnedBalloon[letter].balloonElements;
+  //sender første arrayet inn i balloonAnimation.
+  balloonAnimation(balloons[0]);
+  //fjerner det første elementet i arrayet.
+  balloons.shift();
+  totalBalloonCount--;
+  return;
 };
 
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
 function gameEvent(keyStroke) {
   let letter = keyStroke.key.toUpperCase();
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
-  if (!spawnedBalloon[letter] || !spawnedBalloon[letter].count) {
+  if (
+    !spawnedBalloon[letter] ||
+    spawnedBalloon[letter].balloonElements.length === 0
+  ) {
+    //hvis bokstaven ikke er spawnet, eller alle elementene er vekke. mist liv.
     removeLife();
     return;
   } else {
-    //siden balloonSelector fjerner alle balloons med den bokstaven, sier jeg at de nå er vekk.
-    spawnedBalloon[letter].count--;
+    //send bokstaven videre til balloonselector.
     balloonSelector(letter);
   }
 }
