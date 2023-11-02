@@ -47,13 +47,13 @@ const difficultySelection = [
   {
     maxLife: 5,
     time: 1000,
-    maxBalloon: 25,
+    maxBalloon: 50,
     text: "Easy",
   },
   {
     maxLife: 5,
     time: 500,
-    maxBalloon: 25,
+    maxBalloon: 50,
     text: "Medium",
   },
   {
@@ -182,8 +182,6 @@ const spawnBalloon = () => {
     spawnedBalloon[balloon.textContent].exists = true;
     spawnedBalloon[balloon.textContent].count++;
   }
-  console.log(spawnedBalloon);
-  console.log(spawnedBalloon[balloon.textContent].count);
 };
 
 //ved å gjøre balloon animation async, så kan balloonRemover "promise" en "resolve" før balloonAnimation er ferdig.
@@ -235,7 +233,6 @@ const balloonChecker = () => {
   if (balloonCount > maxBalloon) {
     removeLife();
   }
-  //kjører no-life for å se om man er død.
 };
 
 //denne funksjonen kjører kun når life har blitt 0
@@ -243,7 +240,7 @@ const noLife = () => {
   //her stopper jeg begge intervallene.
   clearInterval(balloonSpawner);
   clearInterval(lifeTimer);
-  //jeg fjerner alle balloon
+  //jeg fjerner alle balloons
   let balloons = document.querySelectorAll(".balloon");
   balloons.forEach((balloon) => balloon.remove());
   //skjekker om det er kommet en ny high score.
@@ -253,20 +250,21 @@ const noLife = () => {
   stopped = true;
 };
 
-//Funksjon som resetter spillet tilbake til start.
+//Funksjon som resetter spillet ved spillstart.
 function reset() {
   //setter life, time og maxBalloon basert på difficulty objekt.
   let difficulty = difficultySelection[difficultySelector.value];
   life = difficulty.maxLife;
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
-  //resetter score til 0, i tilfelle
+  //resetter score og balloonCount til 0
   score = 0;
   balloonCount = 0;
   scoreCount.textContent = `Score: ${score}`;
   //starter balloonspawner og den som skjekker anntallet balloons.
   balloonSpawner = setInterval(spawnBalloon, time);
   lifeTimer = setInterval(balloonChecker, time);
+  //tømmer spawnedBalloon objektet.
   spawnedBalloon = {};
 }
 
@@ -292,6 +290,7 @@ const gameStart = () => {
 };
 //funksjon som kjøres hvis en balloon er funnet.
 const balloonSelector = (letter) => {
+  //Jeg vil bare fjerne en og en balloon, vet ikke om det er noen annen måte å gjøre det på, siden balloons er en nodeList. .find fungerer ikke så vidt jeg vet.
   let balloons = document.querySelectorAll(".balloon");
   for (let i = 0; i < balloons.length; i++) {
     if (balloons[i].textContent === letter) {
