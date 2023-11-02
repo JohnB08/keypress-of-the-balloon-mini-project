@@ -92,16 +92,21 @@ startGameBtn.textContent = "Start Game!";
 difficultySelector.classList.add("selector");
 
 //predefinerer variabler jeg trenger til spillet.
+//Gir alle "default" verdier så de blir lastet inn i memory.
 let score = 0;
 scoreCount.textContent = `Score: ${score}`;
 let highScore = 0;
+//Prefedinerer timerene mine i memory.
 let balloonSpawner = null;
+let lifeTimer = null;
 let life = 5;
 let maxBalloon = 0;
 //bruker stopped variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let stopped = true;
 let balloonCount = 0;
+//Lager et tomt object som jeg kan fylle med key/value pairs for å se om en bokstav er spawnet eller ikke.
 let spawnedBalloon = {};
+
 //Funksjon som lager element, tar in to ting:
 //string som er hvilken type element, og et object array med propertynavn -> property value.
 const makeElement = (type, properties) => {
@@ -155,7 +160,7 @@ const spawnBalloon = () => {
   let randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
   //genererer en random x koordinat
   let xCoordinate = Math.floor(Math.random() * 80) + 5;
-  //genererer en random y coordinat
+  //genererer en random y koordinat
   //passer på at det alltid er litt luft fra kanten.
   let yCoordinate = Math.floor(Math.random() * 80) + 5;
   //kjører makeElement funksjonen, og gir div class balloon, og random x/y coordinater.
@@ -166,8 +171,19 @@ const spawnBalloon = () => {
   balloon.classList.add("balloon");
   balloonContainer.appendChild(balloon);
   balloonCount++;
-  spawnedBalloon[balloon.textContent] = true;
-  //legger bokstaven inn i balloon
+  //Lager en if else, for å se om balloon med bokstav er blitt spawnet allerede.
+  //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite,
+  //men trenger ikke kjøre document.querySelectorAll før jeg faktisk må fjerne et html element.
+  if (!spawnedBalloon[balloon.textContent]) {
+    //lager et object, i spawnedBalloon for denne bokstaven.
+    spawnedBalloon[balloon.textContent] = { exists: true, count: 1 };
+  } else {
+    //hvis objectet allerede er spawnet, setter eg exists til true, og inkrementer count.
+    spawnedBalloon[balloon.textContent].exists = true;
+    spawnedBalloon[balloon.textContent].count++;
+  }
+  console.log(spawnedBalloon);
+  console.log(spawnedBalloon[balloon.textContent].count);
 };
 
 //ved å gjøre balloon animation async, så kan balloonRemover "promise" en "resolve" før balloonAnimation er ferdig.
@@ -205,10 +221,12 @@ const lifeCount = () => {
 
 //funksjon som fjerner liv og hjerter.
 const removeLife = () => {
-  //skjekker om vi har ta
+  //finner alle hjerteikonene som er igjen.
   let hearts = document.querySelectorAll(".heart");
+  //fjerner en av de.
   hearts[life - 1].remove();
   life--;
+  //skjekker om vi har tapt.
   if (life === 0) noLife();
 };
 
@@ -235,8 +253,9 @@ const noLife = () => {
   stopped = true;
 };
 
-//setter life, time og maxBalloon basert på difficulty objekt.
+//Funksjon som resetter spillet tilbake til start.
 function reset() {
+  //setter life, time og maxBalloon basert på difficulty objekt.
   let difficulty = difficultySelection[difficultySelector.value];
   life = difficulty.maxLife;
   maxBalloon = difficulty.maxBalloon;
@@ -274,25 +293,27 @@ const gameStart = () => {
 //funksjon som kjøres hvis en balloon er funnet.
 const balloonSelector = (letter) => {
   let balloons = document.querySelectorAll(".balloon");
-  balloons.forEach((balloon) => {
-    //Finner første knapp i nodeListen som passer med knappen som ble trykket.
-    if (letter === balloon.textContent.toLowerCase()) {
-      //sender ballongen statementen over finner inn i balloonAnimation
-      balloonAnimation(balloon);
+  for (let i = 0; i < balloons.length; i++) {
+    if (balloons[i].textContent === letter) {
+      balloonAnimation(balloons[i]);
       balloonCount--;
       return;
     }
-  });
+  }
 };
+
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
 function gameEvent(keyStroke) {
-  let letter = keyStroke.key;
+  let letter = keyStroke.key.toUpperCase();
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
-  if (!spawnedBalloon[letter.toUpperCase()]) {
+  if (!spawnedBalloon[letter] || !spawnedBalloon[letter].exists) {
     removeLife();
     return;
   } else {
-    spawnedBalloon[letter.toUpperCase()] = false;
+    //siden balloonSelector fjerner alle balloons med den bokstaven, sier jeg at de nå er vekk.
+    spawnedBalloon[letter].count--;
+    if (spawnedBalloon[letter].count === 0)
+      spawnedBalloon[letter].exists = false;
     balloonSelector(letter);
   }
 }
@@ -304,15 +325,12 @@ startGameBtn.addEventListener("click", (event) => {
 });
 //legger på en event listener som input til spillet.
 document.addEventListener("keydown", (keyStroke) => {
-  if (keyStroke.code !== "Enter") {
-    //bruker stopped her for å passe på at random taster ikke registreres så lenge spillet ikke er startet.
-    if (stopped) return;
-    else gameEvent(keyStroke);
-  } else {
-    if (stopped) {
-      //starter spillet hvis Enter er trykket.
-      stopped = false;
-      gameStart();
-    }
-  }
+  //Hvis spillet er stoppet, men enter er IKKE trykket, gjør ingenting.
+  if (stopped && keyStroke.code !== "Enter") return;
+  //Hvis spillet er stoppet, og enter er trykket, start spillet.
+  else if (stopped && keyStroke.code === "Enter") {
+    stopped = false;
+    gameStart();
+    //Hvis spillet er startet, kjør gameEvent for hver knapp.
+  } else gameEvent(keyStroke);
 });
