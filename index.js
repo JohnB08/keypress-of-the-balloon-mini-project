@@ -103,7 +103,7 @@ let life = 5;
 let maxBalloon = 0;
 //bruker stopped variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let stopped = true;
-let balloonCount = 0;
+let totalBalloonCount = 0;
 //Lager et tomt object som jeg kan fylle med key/value pairs for å se om en bokstav er spawnet eller ikke.
 let spawnedBalloon = {};
 
@@ -170,7 +170,7 @@ const spawnBalloon = () => {
   });
   balloon.classList.add("balloon");
   balloonContainer.appendChild(balloon);
-  balloonCount++;
+  totalBalloonCount++;
   //Lager en if else, for å se om balloon med bokstav er blitt spawnet allerede.
   //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite,
   //men trenger ikke kjøre document.querySelectorAll før jeg faktisk må fjerne et html element.
@@ -229,7 +229,7 @@ const removeLife = () => {
 
 //Skjekker hvor mange balloons som er laget, og fjerner liv hvis antallet går over et treshhold.
 const balloonChecker = () => {
-  if (balloonCount > maxBalloon) {
+  if (totalBalloonCount > maxBalloon) {
     removeLife();
   }
 };
@@ -256,9 +256,9 @@ function reset() {
   life = difficulty.maxLife;
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
-  //resetter score og balloonCount til 0
+  //resetter score og totalBalloonCount til 0
   score = 0;
-  balloonCount = 0;
+  totalBalloonCount = 0;
   scoreCount.textContent = `Score: ${score}`;
   //starter balloonspawner og den som skjekker anntallet balloons.
   balloonSpawner = setInterval(spawnBalloon, time);
@@ -294,7 +294,7 @@ const balloonSelector = (letter) => {
   for (let i = 0; i < balloons.length; i++) {
     if (balloons[i].textContent === letter) {
       balloonAnimation(balloons[i]);
-      balloonCount--;
+      totalBalloonCount--;
       return;
     }
   }
@@ -314,12 +314,12 @@ function gameEvent(keyStroke) {
   }
 }
 
-//bruker knappen for å starte spillet.
+//Hvis man bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
   stopped = false;
   gameStart();
 });
-//legger på en event listener som input til spillet.
+//Legger på en eventListener til hele dokumentet.
 document.addEventListener("keydown", (keyStroke) => {
   //Hvis spillet er stoppet, men enter er IKKE trykket, gjør ingenting.
   if (stopped && keyStroke.code !== "Enter") return;
