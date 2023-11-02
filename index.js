@@ -75,7 +75,6 @@ const difficultySelection = [
     text: "Apocalypse Mode",
   },
 ];
-
 //Appender det som skal appendes.
 scoreContainer.appendChild(highScoreTracker);
 
@@ -102,7 +101,7 @@ let maxBalloon = 0;
 //bruker stopped variabelen så ingen kode blir kjørt av tastetrykk før spillet starter.
 let stopped = true;
 let balloonCount = 0;
-
+let spawnedBalloon = {};
 //Funksjon som lager element, tar in to ting:
 //string som er hvilken type element, og et object array med propertynavn -> property value.
 const makeElement = (type, properties) => {
@@ -167,6 +166,7 @@ const spawnBalloon = () => {
   balloon.classList.add("balloon");
   balloonContainer.appendChild(balloon);
   balloonCount++;
+  spawnedBalloon[balloon.textContent] = true;
   //legger bokstaven inn i balloon
 };
 
@@ -243,10 +243,12 @@ function reset() {
   time = difficulty.time;
   //resetter score til 0, i tilfelle
   score = 0;
+  balloonCount = 0;
   scoreCount.textContent = `Score: ${score}`;
   //starter balloonspawner og den som skjekker anntallet balloons.
   balloonSpawner = setInterval(spawnBalloon, time);
   lifeTimer = setInterval(balloonChecker, time);
+  spawnedBalloon = {};
 }
 
 //setter knapp og select inn på skjermen.
@@ -269,23 +271,30 @@ const gameStart = () => {
   //fjerner startknappen og difficulty selector
   removeMenu();
 };
-//hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
-function gameEvent(keyStroke) {
-  //skjekker om det finnes en balloon, og skjekker hva innholdet er.
+//funksjon som kjøres hvis en balloon er funnet.
+const balloonSelector = (letter) => {
   let balloons = document.querySelectorAll(".balloon");
-  let balloonExists = false;
-  //lager en loop som looper gjennom alle balloons som finnes når en knapp blir trykket.
   balloons.forEach((balloon) => {
-    //skjekker om knappen som ble trykket i eventet ovenfor er ligt .code til tastaturknappene til bokstaver.
-    if (keyStroke.key === balloon.textContent.toLowerCase()) {
+    //Finner første knapp i nodeListen som passer med knappen som ble trykket.
+    if (letter === balloon.textContent.toLowerCase()) {
       //sender ballongen statementen over finner inn i balloonAnimation
       balloonAnimation(balloon);
-      balloonExists = true;
       balloonCount--;
       return;
     }
   });
-  if (!balloonExists) removeLife();
+};
+//hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
+function gameEvent(keyStroke) {
+  let letter = keyStroke.key;
+  //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
+  if (!spawnedBalloon[letter.toUpperCase()]) {
+    removeLife();
+    return;
+  } else {
+    spawnedBalloon[letter.toUpperCase()] = false;
+    balloonSelector(letter);
+  }
 }
 
 //bruker knappen for å starte spillet.
@@ -300,8 +309,10 @@ document.addEventListener("keydown", (keyStroke) => {
     if (stopped) return;
     else gameEvent(keyStroke);
   } else {
-    //starter spillet hvis Enter er trykket.
-    stopped = false;
-    gameStart();
+    if (stopped) {
+      //starter spillet hvis Enter er trykket.
+      stopped = false;
+      gameStart();
+    }
   }
 });
