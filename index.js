@@ -127,7 +127,7 @@ const mobileCheck = () => {
   if (window.innerWidth > 800) return;
   else {
     let hiddenInput = makeElement("input", { type: "text" }, "hiddenInput");
-    gameObject.hiddenInput = hiddenInput;
+    gameObjects.hiddenInput = hiddenInput;
     document.body.appendChild(hiddenInput);
   }
 };
@@ -363,7 +363,8 @@ function gameEvent(keyStroke) {
 //Hvis man bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
   stopped = false;
-  if (window.innerWidth < 800) gameObject.hiddenInput.focus();
+  if (window.innerWidth < 800)
+    gameObjects.hiddenInput.focus({ preventScroll: true });
 });
 //Legger på en eventListener til hele dokumentet.
 document.addEventListener("keydown", (keyStroke) => {
