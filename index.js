@@ -101,6 +101,7 @@ stopped = baseValues.stopped;
 totalBalloonCount = baseValues.totalBalloonCount;
 gameObjects = baseValues.gameObjects;
 currentHearts = baseValues.currentHearts;
+gameObjects.hiddenInput = {};
 gameObjects.hiddenInput.isActive = false;
 
 /* ON LOAD FUNCTIONS */
@@ -130,7 +131,7 @@ const mobileCheck = () => {
   if (window.innerWidth > 800) return;
   else {
     let hiddenInput = makeElement("input", { type: "text" }, "hiddenInput");
-    gameObjects.hiddenInput = hiddenInput;
+    gameObjects.hiddenInput.inputEl = hiddenInput;
     gameObjects.hiddenInput.isActive = true;
     balloonContainer.appendChild(hiddenInput);
   }
@@ -346,7 +347,7 @@ const spawnBalloon = () => {
 
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
 function gameEvent(keyStroke) {
-  let letter = keyStroke;
+  let letter = keyStroke.toUpperCase();
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
   if (
     !gameObjects[letter] ||
@@ -376,9 +377,12 @@ startGameBtn.addEventListener("click", (event) => {
 
 //legger på en eventListener i tilfelle hiddenInput er laget.
 if (gameObjects.hiddenInput.isActive) {
-  gameObjects.hiddenInput.addEventListener("beforeinput", (touchedKey) => {
-    gameEvent(touchedKey.data);
-  });
+  gameObjects.hiddenInput.inputEl.addEventListener(
+    "beforeinput",
+    (touchedKey) => {
+      gameEvent(touchedKey.data);
+    }
+  );
 }
 //Legger på en eventListener til hele dokumentet.
 
