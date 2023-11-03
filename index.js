@@ -372,6 +372,7 @@ startGameBtn.addEventListener("click", (event) => {
 });
 //Legger på en eventListener til hele dokumentet.
 document.addEventListener("keydown", (keyStroke) => {
+  console.log(keyStroke);
   //Hvis spillet er stoppet, men enter er IKKE trykket, gjør ingenting.
   if (stopped && keyStroke.code !== "Enter") return;
   //Hvis spillet er stoppet, og enter er trykket, start spillet.
