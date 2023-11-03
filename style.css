@@ -76,7 +76,12 @@ footer {
   width: 600px;
 }
 .hiddenInput {
-  opacity: 0;
+  opacity: 0.1;
+  background-color: transparent;
+  border: none;
+}
+.hiddenInput:focus {
+  outline: none;
 }
 @keyframes poppedBalloon {
   10% {
