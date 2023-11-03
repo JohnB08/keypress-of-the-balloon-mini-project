@@ -89,7 +89,7 @@ spawnedBalloon = baseValues.spawnedBalloon;
 currentHearts = baseValues.currentHearts;
 //Funksjon som lager element, tar in to ting:
 //string som er hvilken type element, og et object array med propertynavn -> property value.
-const makeElement = (type, properties) => {
+const makeElement = (type, properties, className, appendLocation) => {
   const element = document.createElement(type);
 
   //tar alle keys og values og gjør de om til key/value arrays.
@@ -102,16 +102,22 @@ const makeElement = (type, properties) => {
     //da kan vi bruke propertyName variablen, siden den alltid vil være en string.
     element[propertyName] = propertyValue;
   });
+  element.classList.add(className);
+  appendLocation.appendChild(element);
   return element;
 };
 
 //Her Lager jeg difficultyselection + alle options i en for Each loop.
 difficultySelection.forEach((difficulty) => {
-  let difficultyChoice = makeElement("option", {
-    textContent: difficulty.text,
-    value: difficultySelection.indexOf(difficulty),
-  });
-  difficultySelector.appendChild(difficultyChoice);
+  makeElement(
+    "option",
+    {
+      textContent: difficulty.text,
+      value: difficultySelection.indexOf(difficulty),
+    },
+    "difficulty",
+    difficultySelector
+  );
 });
 
 //prøver å hente highscore fra local storage.
@@ -144,12 +150,15 @@ const spawnBalloon = () => {
   //passer på at det alltid er litt luft fra kanten.
   let yCoordinate = Math.floor(Math.random() * 80) + 5;
   //kjører makeElement funksjonen, og gir div class balloon, og random x/y coordinater.
-  let balloon = makeElement("div", {
-    style: `top: ${yCoordinate}%; left: ${xCoordinate}%;`,
-    textContent: randomLetter,
-  });
-  balloon.classList.add("balloon");
-  balloonContainer.appendChild(balloon);
+  let balloon = makeElement(
+    "div",
+    {
+      style: `top: ${yCoordinate}%; left: ${xCoordinate}%;`,
+      textContent: randomLetter,
+    },
+    "balloon",
+    balloonContainer
+  );
   totalBalloonCount++;
   //Lager en if else, for å se om balloon med bokstav er blitt spawnet allerede.
   //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite
@@ -192,11 +201,14 @@ balloonRemover = (balloon) => {
 //Displayer hjerteSVG over balooncontainer basert på hvor mange liv man starter med.
 const lifeCount = () => {
   for (let i = 0; i < life; i++) {
-    let heart = makeElement("img", { src: "./img/life.svg" });
+    let heart = makeElement(
+      "img",
+      { src: "./img/life.svg" },
+      "heart",
+      heartContainer
+    );
     //pusher det nye elementet til currentHearts array.
     currentHearts.push(heart);
-    heart.classList.add("heart");
-    heartContainer.appendChild(heart);
   }
 };
 
