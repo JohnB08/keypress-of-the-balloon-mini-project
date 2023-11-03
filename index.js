@@ -102,6 +102,7 @@ totalBalloonCount = baseValues.totalBalloonCount;
 gameObjects = baseValues.gameObjects;
 currentHearts = baseValues.currentHearts;
 gameObjects.hiddenInput = {};
+gameObjects.balloons = {};
 gameObjects.hiddenInput.isActive = false;
 
 /* ON LOAD FUNCTIONS */
@@ -206,9 +207,14 @@ const noLife = () => {
   //her stopper jeg begge intervallene.
   clearInterval(balloonSpawner);
   clearInterval(lifeTimer);
-  //jeg fjerner alle balloons som finnes. Velger å bruke querySelectorAll her, siden jeg skal fjerne ALLE, slipper å loope gjennom hvert bokstavarray.
-  let balloons = document.querySelectorAll(".balloon");
-  balloons.forEach((balloon) => balloon.remove());
+  //jeg fjerner alle balloons som finnes. Må loope gjennom hver bokstav.
+  Object.keys(gameObjects.balloons).forEach((letter) => {
+    gameObjects.balloons[letter].balloonElements.forEach((balloon) =>
+      balloon.remove()
+    );
+  });
+  //resetter balloon objektet.
+  gameObjects.balloons = {};
   //skjekker om det er kommet en ny high score.
   if (score > highScore) saveHighScore();
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
@@ -303,7 +309,7 @@ const balloonChecker = () => {
 //funksjon som kjøres hvis en balloon er funnet.
 const balloonSelector = (letter) => {
   //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i gameObjects objectet.
-  let balloons = gameObjects[letter].balloonElements;
+  let balloons = gameObjects.balloons[letter].balloonElements;
   //sender første arrayet inn i balloonAnimation.
   balloonAnimation(balloons[0]);
   //fjerner det første elementet i arrayet.
@@ -337,16 +343,16 @@ const spawnBalloon = () => {
   //Lager en if else, for å se om balloon med bokstav er blitt spawnet allerede.
   //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite
   //uten å måtte querySelectorAll etter .balloon classen som tidligere.
-  if (!gameObjects[balloon.textContent]) {
+  if (!gameObjects.balloons[balloon.textContent]) {
     //lager et object, i gameObjects for denne bokstaven. Sender inn et element som er et Array av alle elementer hittil spawnet.
-    gameObjects[balloon.textContent] = {
+    gameObjects.balloons[balloon.textContent] = {
       balloonElements: [balloon],
     };
   } else {
     //hvis objectet allerede er spawnet, pusher jeg det nye elementet til balloonElements Arrayet.
-    gameObjects[balloon.textContent].balloonElements.push(balloon);
+    gameObjects.balloons[balloon.textContent].balloonElements.push(balloon);
   }
-  console.log(gameObjects[balloon.textContent].balloonElements);
+  console.log(gameObjects.balloons[balloon.textContent].balloonElements);
 };
 
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
@@ -354,8 +360,8 @@ function gameEvent(keyStroke) {
   let letter = keyStroke.toUpperCase();
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
   if (
-    !gameObjects[letter] ||
-    gameObjects[letter].balloonElements.length === 0
+    !gameObjects.balloons[letter] ||
+    gameObjects.balloons[letter].balloonElements.length === 0
   ) {
     //hvis bokstaven ikke er spawnet, eller alle elementene er vekke. mist liv.
     removeLife();
