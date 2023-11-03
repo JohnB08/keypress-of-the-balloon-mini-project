@@ -131,11 +131,7 @@ const makeElement = (type, properties, className) => {
 const mobileCheck = () => {
   if (window.innerWidth > 600) return;
   else {
-    let hiddenInput = makeElement(
-      "input",
-      { type: "text", maxlength: "1" },
-      "hiddenInput"
-    );
+    let hiddenInput = makeElement("input", { type: "text" }, "hiddenInput");
     gameObjects.hiddenInput.inputEl = hiddenInput;
     gameObjects.hiddenInput.isActive = true;
     balloonContainer.appendChild(hiddenInput);
