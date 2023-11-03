@@ -383,6 +383,7 @@ if (gameObjects.hiddenInput.isActive) {
       gameEvent(touchedKey.data);
     }
   );
+  //eventlistener på balloonContainer i tilfelle bruker klikker vekk tastaturet.
   balloonContainer.addEventListener("click", () =>
     gameObjects.hiddenInput.inputEl.focus({ preventScroll: true })
   );
