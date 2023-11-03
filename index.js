@@ -125,10 +125,12 @@ const makeElement = (type, properties, className) => {
 //lager bakgrunnsmusikkElementet
 soundElements.backgroundMusic.audioEl = makeElement("audio", {
   src: `${soundElements.backgroundMusic.folder}${soundElements.backgroundMusic.file}`,
+  volume: "0.2",
 });
 //lager audio element for error
 soundElements.soundEffects.error.audioEl = makeElement("audio", {
   src: `${soundElements.soundEffects.folder}${soundElements.soundEffects.error.file}`,
+  volume: "0.5",
 });
 //Her Lager jeg difficultyselection + alle options i en for Each loop.
 Object.keys(difficultySelection).forEach((difficulty) => {
@@ -323,6 +325,7 @@ const spawnBalloon = () => {
     //hvis objectet allerede er spawnet, pusher jeg det nye elementet til balloonElements Arrayet.
     balloonObject[balloon.textContent].balloonElements.push(balloon);
   }
+  console.log(balloonObject[balloon.textContent].balloonElements);
 };
 
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
