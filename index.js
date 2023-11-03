@@ -383,6 +383,9 @@ if (gameObjects.hiddenInput.isActive) {
       gameEvent(touchedKey.data);
     }
   );
+  balloonContainer.addEventListener("click", () =>
+    gameObjects.hiddenInput.inputEl.focus({ preventScroll: true })
+  );
 }
 //Legger på en eventListener til hele dokumentet.
 
