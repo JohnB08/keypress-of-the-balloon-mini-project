@@ -370,7 +370,7 @@ startGameBtn.addEventListener("click", (event) => {
   stopped = false;
   //prøver å lage en skjult input, som knappen fokuserer på hvis man er på mobiltlf.
   if (window.innerWidth < 800) {
-    gameObjects.hiddenInput.focus({ preventScroll: true });
+    gameObjects.hiddenInput.inputEl.focus({ preventScroll: true });
   }
   gameStart();
 });
