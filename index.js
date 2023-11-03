@@ -101,6 +101,7 @@ stopped = baseValues.stopped;
 totalBalloonCount = baseValues.totalBalloonCount;
 gameObjects = baseValues.gameObjects;
 currentHearts = baseValues.currentHearts;
+gameObjects.hiddenInput.isActive = false;
 
 /* ON LOAD FUNCTIONS */
 
@@ -374,11 +375,13 @@ startGameBtn.addEventListener("click", (event) => {
 });
 
 //legger på en eventListener i tilfelle hiddenInput er laget.
-gameObjects.hiddenInput.addEventListener("beforeinput", (touchedKey) => {
-  gameEvent(touchedKey.data);
-});
-
+if (gameObjects.hiddenInput.isActive) {
+  gameObjects.hiddenInput.addEventListener("beforeinput", (touchedKey) => {
+    gameEvent(touchedKey.data);
+  });
+}
 //Legger på en eventListener til hele dokumentet.
+
 document.addEventListener("keydown", (keyStroke) => {
   //Hvis spillet er stoppet, men enter er IKKE trykket, gjør ingenting.
   if (
@@ -387,11 +390,7 @@ document.addEventListener("keydown", (keyStroke) => {
   )
     return;
   //Hvis spillet er stoppet, og enter er trykket, start spillet.
-  else if (
-    stopped &&
-    keyStroke.code === "Enter" &&
-    !gameObjects.hiddenInput.isActive
-  ) {
+  else if (stopped && keyStroke.code === "Enter") {
     stopped = false;
     gameStart();
     //Hvis spillet er startet, kjør gameEvent for hver knapp.
