@@ -123,6 +123,7 @@ const makeElement = (type, properties, className) => {
 };
 
 //prøver å gjøre spillet compatible på tlf med en hack
+//kjører en funksjon på load som ser om viewporten er smal nok til å være en mobilskjerm, og lager en skjult inputfield under ballooncontainer.
 const mobileCheck = () => {
   if (window.innerWidth > 800) return;
   else {
@@ -363,8 +364,10 @@ function gameEvent(keyStroke) {
 //Hvis man bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
   stopped = false;
+  //prøver å lage en skjult input, som knappen fokuserer på hvis man er på mobiltlf.
   if (window.innerWidth < 800)
     gameObjects.hiddenInput.focus({ preventScroll: true });
+  gameStart();
 });
 //Legger på en eventListener til hele dokumentet.
 document.addEventListener("keydown", (keyStroke) => {
