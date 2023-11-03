@@ -72,6 +72,12 @@ body {
 .popped {
   animation: poppedBalloon 1s ease-in-out;
 }
+footer {
+  width: 600px;
+}
+.hiddenInput {
+  opacity: 0;
+}
 @keyframes poppedBalloon {
   10% {
     transform: translateY(-50px);
@@ -96,4 +102,26 @@ body {
 }
 .selector:hover {
   cursor: pointer;
+}
+@media only screen and (max-width: 800px) {
+  .ballooncontainer {
+    width: 350px;
+    height: 350px;
+  }
+  .btn {
+    font-size: 24px;
+  }
+  footer {
+    width: 350px;
+  }
+  .heart {
+    height: 16px;
+    width: 16px;
+  }
+  h1 {
+    font-size: 16px;
+  }
+  h2 {
+    font-size: 16px;
+  }
 }

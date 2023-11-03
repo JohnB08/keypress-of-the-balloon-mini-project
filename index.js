@@ -62,6 +62,15 @@ startGameBtn.textContent = "Start Game!";
 
 difficultySelector.classList.add("selector");
 
+//prøver å gjøre spillet compatible på tlf med en hack
+const mobileCheck = () => {
+  if (window.innerWidth > 400) return;
+  else {
+    let hiddenInput = makeElement("input", { type: "text" }, "hiddenInput");
+    document.body.appendChild(hiddenInput);
+  }
+};
+
 //test object, prøver noe greier.
 const baseValues = {
   score: 0,
@@ -121,6 +130,9 @@ const makeElement = (type, properties, className) => {
   element.classList.add(className);
   return element;
 };
+
+mobileCheck();
+console.log(document);
 
 //lager bakgrunnsmusikkElementet
 soundElements.backgroundMusic.audioEl = makeElement("audio", {
@@ -351,6 +363,7 @@ function gameEvent(keyStroke) {
 //Hvis man bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
   stopped = false;
+  if (window.innerWidth < 400) hiddenInput.focus();
   gameStart();
 });
 //Legger på en eventListener til hele dokumentet.
