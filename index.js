@@ -72,7 +72,7 @@ const baseValues = {
   maxBalloon: 0,
   stopped: true,
   totalBalloonCount: 0,
-  spawnedBalloon: {},
+  balloonObject: {},
   currentHearts: [],
 };
 //Gir alle "default" verdier så de blir lastet inn i memory.
@@ -84,7 +84,7 @@ life = baseValues.life;
 maxBalloon = baseValues.maxBalloon;
 stopped = baseValues.stopped;
 totalBalloonCount = baseValues.totalBalloonCount;
-spawnedBalloon = baseValues.spawnedBalloon;
+balloonObject = baseValues.balloonObject;
 currentHearts = baseValues.currentHearts;
 
 /* ON LOAD FUNCTIONS */
@@ -191,8 +191,8 @@ function reset() {
   //starter balloonspawner og den som skjekker anntallet balloons.
   balloonSpawner = setInterval(spawnBalloon, time);
   lifeTimer = setInterval(balloonChecker, time);
-  //tømmer spawnedBalloon objektet.
-  spawnedBalloon = baseValues.spawnedBalloon;
+  //tømmer balloonObject objektet.
+  balloonObject = baseValues.balloonObject;
 }
 
 //Lagrer ny highscore i localstorage hvis det har skjedd i noLife().
@@ -259,8 +259,8 @@ const balloonChecker = () => {
 
 //funksjon som kjøres hvis en balloon er funnet.
 const balloonSelector = (letter) => {
-  //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i spawnedBalloon objectet.
-  let balloons = spawnedBalloon[letter].balloonElements;
+  //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i balloonObject objectet.
+  let balloons = balloonObject[letter].balloonElements;
   //sender første arrayet inn i balloonAnimation.
   balloonAnimation(balloons[0]);
   //fjerner det første elementet i arrayet.
@@ -294,14 +294,14 @@ const spawnBalloon = () => {
   //Lager en if else, for å se om balloon med bokstav er blitt spawnet allerede.
   //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite
   //uten å måtte querySelectorAll etter .balloon classen som tidligere.
-  if (!spawnedBalloon[balloon.textContent]) {
-    //lager et object, i spawnedBalloon for denne bokstaven. Sender inn et element som er et Array av alle elementer hittil spawnet.
-    spawnedBalloon[balloon.textContent] = {
+  if (!balloonObject[balloon.textContent]) {
+    //lager et object, i balloonObject for denne bokstaven. Sender inn et element som er et Array av alle elementer hittil spawnet.
+    balloonObject[balloon.textContent] = {
       balloonElements: [balloon],
     };
   } else {
     //hvis objectet allerede er spawnet, pusher jeg det nye elementet til balloonElements Arrayet.
-    spawnedBalloon[balloon.textContent].balloonElements.push(balloon);
+    balloonObject[balloon.textContent].balloonElements.push(balloon);
   }
 };
 
@@ -310,8 +310,8 @@ function gameEvent(keyStroke) {
   let letter = keyStroke.key.toUpperCase();
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
   if (
-    !spawnedBalloon[letter] ||
-    spawnedBalloon[letter].balloonElements.length === 0
+    !balloonObject[letter] ||
+    balloonObject[letter].balloonElements.length === 0
   ) {
     //hvis bokstaven ikke er spawnet, eller alle elementene er vekke. mist liv.
     removeLife();
