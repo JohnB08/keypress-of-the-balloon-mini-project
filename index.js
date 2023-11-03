@@ -207,12 +207,9 @@ const noLife = () => {
   //her stopper jeg begge intervallene.
   clearInterval(balloonSpawner);
   clearInterval(lifeTimer);
-  //jeg fjerner alle balloons som finnes. Må loope gjennom hver bokstav.
-  Object.keys(gameObjects.balloons).forEach((letter) => {
-    gameObjects.balloons[letter].balloonElements.forEach((balloon) =>
-      balloon.remove()
-    );
-  });
+  //jeg fjerner alle balloons som finnes.
+  let balloons = document.querySelectorAll(".balloon");
+  balloons.forEach((balloon) => balloon.remove());
   //resetter balloon objektet.
   gameObjects.balloons = {};
   //skjekker om det er kommet en ny high score.
