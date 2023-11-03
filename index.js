@@ -129,7 +129,7 @@ const mobileCheck = () => {
   else {
     let hiddenInput = makeElement("input", { type: "text" }, "hiddenInput");
     gameObjects.hiddenInput = hiddenInput;
-    document.body.appendChild(hiddenInput);
+    balloonContainer.appendChild(hiddenInput);
   }
 };
 mobileCheck();
@@ -343,7 +343,7 @@ const spawnBalloon = () => {
 
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
 function gameEvent(keyStroke) {
-  let letter = keyStroke.key.toUpperCase();
+  let letter = keyStroke.code.split("").pop();
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
   if (
     !gameObjects[letter] ||

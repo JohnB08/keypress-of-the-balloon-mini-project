@@ -76,7 +76,7 @@ footer {
   width: 600px;
 }
 .hiddenInput {
-  opacity: 0.1;
+  opacity: 0;
   background-color: transparent;
   border: none;
 }
