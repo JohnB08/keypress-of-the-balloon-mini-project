@@ -130,6 +130,7 @@ const mobileCheck = () => {
   else {
     let hiddenInput = makeElement("input", { type: "text" }, "hiddenInput");
     gameObjects.hiddenInput = hiddenInput;
+    gameObjects.hiddenInput.isActive = true;
     balloonContainer.appendChild(hiddenInput);
   }
 };
@@ -344,7 +345,7 @@ const spawnBalloon = () => {
 
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
 function gameEvent(keyStroke) {
-  let letter = keyStroke.code.split("").pop();
+  let letter = keyStroke;
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
   if (
     !gameObjects[letter] ||
@@ -366,19 +367,33 @@ function gameEvent(keyStroke) {
 startGameBtn.addEventListener("click", (event) => {
   stopped = false;
   //prøver å lage en skjult input, som knappen fokuserer på hvis man er på mobiltlf.
-  if (window.innerWidth < 800)
+  if (window.innerWidth < 800) {
     gameObjects.hiddenInput.focus({ preventScroll: true });
+  }
   gameStart();
 });
+
+//legger på en eventListener i tilfelle hiddenInput er laget.
+gameObjects.hiddenInput.addEventListener("beforeinput", (touchedKey) => {
+  gameEvent(touchedKey.data);
+});
+
 //Legger på en eventListener til hele dokumentet.
 document.addEventListener("keydown", (keyStroke) => {
-  console.log(keyStroke);
   //Hvis spillet er stoppet, men enter er IKKE trykket, gjør ingenting.
-  if (stopped && keyStroke.code !== "Enter") return;
+  if (
+    (stopped && keyStroke.code !== "Enter") ||
+    gameObjects.hiddenInput.isActive
+  )
+    return;
   //Hvis spillet er stoppet, og enter er trykket, start spillet.
-  else if (stopped && keyStroke.code === "Enter") {
+  else if (
+    stopped &&
+    keyStroke.code === "Enter" &&
+    !gameObjects.hiddenInput.isActive
+  ) {
     stopped = false;
     gameStart();
     //Hvis spillet er startet, kjør gameEvent for hver knapp.
-  } else gameEvent(keyStroke);
+  } else gameEvent(keyStroke.key);
 });
