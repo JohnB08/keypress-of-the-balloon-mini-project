@@ -13,35 +13,6 @@ const startGameBtn = document.createElement("button");
 
 const difficultySelector = document.createElement("select");
 
-//Lager array av hele alfabetet på engelsk.
-const alphabet = [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "U",
-  "V",
-  "W",
-  "X",
-  "Y",
-  "Z",
-];
 //lager et objektarray for vanskelighetsgrad. Ved å legge til et nytt objekt her, legges en ny vanskelighetsgrad til automatisk.
 const difficultySelection = [
   {
@@ -163,8 +134,10 @@ const saveHighScore = () => {
 
 //spawnBalloon funksjon. Lager en firkant med tekst i, og plasserer den en tilfeldig plass i balooncontainer elementet.
 const spawnBalloon = () => {
-  //velger en random bokstav fra alfabet arrayet.
-  let randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+  //Genererer en random uppercase bokstav.
+  let randomLetter = (Math.floor(Math.random() * 26) + 10)
+    .toString(36)
+    .toUpperCase();
   //genererer en random x koordinat
   let xCoordinate = Math.floor(Math.random() * 80) + 5;
   //genererer en random y koordinat
@@ -220,6 +193,7 @@ balloonRemover = (balloon) => {
 const lifeCount = () => {
   for (let i = 0; i < life; i++) {
     let heart = makeElement("img", { src: "./img/life.svg" });
+    //pusher det nye elementet til currentHearts array.
     currentHearts.push(heart);
     heart.classList.add("heart");
     heartContainer.appendChild(heart);
