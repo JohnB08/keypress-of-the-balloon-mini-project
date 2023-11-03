@@ -76,7 +76,6 @@ const baseValues = {
   currentHearts: [],
 };
 //Gir alle "default" verdier så de blir lastet inn i memory.
-//bruker Object.entries + forEach for a lage et array av hvert object.
 score = baseValues.score;
 highScore = baseValues.highScore;
 balloonSpawner = baseValues.balloonSpawner;
@@ -87,8 +86,11 @@ stopped = baseValues.stopped;
 totalBalloonCount = baseValues.totalBalloonCount;
 spawnedBalloon = baseValues.spawnedBalloon;
 currentHearts = baseValues.currentHearts;
+
+/* ON LOAD FUNCTIONS */
+
 //Funksjon som lager element, tar in to ting:
-//string som er hvilken type element, og et object array med propertynavn -> property value.
+//string som er hvilken type element, og et object array med propertynavn -> property value, pluss initial CSS class, og hvor den skal appendes.
 const makeElement = (type, properties, className, appendLocation) => {
   const element = document.createElement(type);
 
@@ -119,7 +121,6 @@ difficultySelection.forEach((difficulty) => {
     difficultySelector
   );
 });
-
 //prøver å hente highscore fra local storage.
 //experimenterer med å få localStorage til å virke.
 if (!localStorage.getItem("highScore")) {
@@ -130,12 +131,142 @@ if (!localStorage.getItem("highScore")) {
   highScore = savedHighScore;
 }
 
-//Lagrer ny highscore i localstorage hvis det har skjedd.
+/* HP DISPLAY AND LIFE MANIPULATION */
+
+//Displayer hjerteSVG over balooncontainer basert på hvor mange liv man starter med.
+const lifeCount = () => {
+  for (let i = 0; i < life; i++) {
+    let heart = makeElement(
+      "img",
+      { src: "./img/life.svg" },
+      "heart",
+      heartContainer
+    );
+    //pusher det nye elementet til currentHearts array.
+    currentHearts.push(heart);
+  }
+};
+
+//funksjon som fjerner liv og hjerter.
+const removeLife = () => {
+  //finner alle hjerteikonene som er igjen.
+  let hearts = currentHearts;
+  //fjerner en av de.
+  hearts[0].remove();
+  //prøvde å bruke push pop her, men den slet med å finne rett html element uten loop, hvis jeg gjorde det sånn. Nå trenger jeg ikke en loop.
+  hearts.shift();
+  life--;
+  //skjekker om vi har tapt.
+  if (life === 0) noLife();
+};
+
+//denne funksjonen kjører kun når life har blitt 0
+const noLife = () => {
+  //her stopper jeg begge intervallene.
+  clearInterval(balloonSpawner);
+  clearInterval(lifeTimer);
+  //jeg fjerner alle balloons som finnes. Velger å bruke querySelectorAll her, siden jeg skal fjerne ALLE, slipper å loope gjennom hvert bokstavarray.
+  let balloons = document.querySelectorAll(".balloon");
+  balloons.forEach((balloon) => balloon.remove());
+  //skjekker om det er kommet en ny high score.
+  if (score > highScore) saveHighScore();
+  //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
+  showMenu();
+  stopped = true;
+};
+
+/* RESET, RESTARTS & UTILITY */
+
+//Funksjon som resetter spillet ved spillstart.
+function reset() {
+  //setter life, time og maxBalloon basert på difficulty objekt.
+  let difficulty = difficultySelection[difficultySelector.value];
+  life = difficulty.maxLife;
+  maxBalloon = difficulty.maxBalloon;
+  time = difficulty.time;
+  //resetter score og totalBalloonCount til 0
+  score = baseValues.score;
+  totalBalloonCount = baseValues.totalBalloonCount;
+  scoreCount.textContent = `Score: ${baseValues.score}`;
+  //starter balloonspawner og den som skjekker anntallet balloons.
+  balloonSpawner = setInterval(spawnBalloon, time);
+  lifeTimer = setInterval(balloonChecker, time);
+  //tømmer spawnedBalloon objektet.
+  spawnedBalloon = baseValues.spawnedBalloon;
+}
+
+//Lagrer ny highscore i localstorage hvis det har skjedd i noLife().
 const saveHighScore = () => {
   highScore = score;
   localStorage.removeItem("highScore");
   localStorage.setItem("highScore", JSON.stringify(highScore));
   highScoreTracker.textContent = `HighScore: ${highScore}`;
+};
+
+//setter knapp og select inn på skjermen.
+function showMenu() {
+  balloonContainer.appendChild(startGameBtn);
+  balloonContainer.appendChild(difficultySelector);
+}
+
+//fjerner knapper og select fra skjermen.
+function removeMenu() {
+  startGameBtn.remove();
+  difficultySelector.remove();
+}
+
+//denne funksjonen kjører når spillet blir startet.
+const gameStart = () => {
+  reset();
+  //setter life, time og maxballoons til det som er bestemt av vanskelighetsgraden
+  lifeCount();
+  //fjerner startknappen og difficulty selector
+  removeMenu();
+};
+
+/* BALLOON MANIPULATON */
+
+//ved å gjøre balloon animation async, så kan balloonRemover "promise" en "resolve" før balloonAnimation er ferdig.
+//tar inn en ballong som parrameter.
+async function balloonAnimation(balloon) {
+  balloon.classList.add("popped");
+  score++;
+  scoreCount.textContent = `Score: ${score}`;
+  //her setter eg await balloonRemover, sånn at funksjonen "pauses" til balloonRemover sender "resolve"
+  //sender samme ballongen videre inn i balloonRemover.
+  await balloonRemover(balloon);
+  return;
+}
+
+//balloonRemover funksjonen sender et "promise to resolve" ut sånn at balloonAnimation vet når setTimeout er ferdig.
+//dette betyr at animasjonen som er knytta til popped classen blir spilt i 300ms før balloon fjernes.
+balloonRemover = (balloon) => {
+  new Promise((resolve) => {
+    //set timeout som arrow function sånn at eg kan ha flere argumenter som skal bli kjørt når delayet er over.
+    setTimeout(() => {
+      balloon.remove();
+      resolve();
+    }, 300);
+  });
+};
+
+//Skjekker hvor mange balloons som er laget, og fjerner liv hvis antallet går over et treshhold.
+const balloonChecker = () => {
+  if (totalBalloonCount > maxBalloon) {
+    removeLife();
+  }
+};
+
+//funksjon som kjøres hvis en balloon er funnet.
+const balloonSelector = (letter) => {
+  //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i spawnedBalloon objectet.
+  let balloons = spawnedBalloon[letter].balloonElements;
+  //sender første arrayet inn i balloonAnimation.
+  balloonAnimation(balloons[0]);
+  //fjerner det første elementet i arrayet.
+  balloons.shift();
+  totalBalloonCount--;
+  return;
 };
 
 //spawnBalloon funksjon. Lager en firkant med tekst i, og plasserer den en tilfeldig plass i balooncontainer elementet.
@@ -174,128 +305,6 @@ const spawnBalloon = () => {
   }
 };
 
-//ved å gjøre balloon animation async, så kan balloonRemover "promise" en "resolve" før balloonAnimation er ferdig.
-//tar inn en ballong som parrameter.
-async function balloonAnimation(balloon) {
-  balloon.classList.add("popped");
-  score++;
-  scoreCount.textContent = `Score: ${score}`;
-  //her setter eg await balloonRemover, sånn at funksjonen "pauses" til balloonRemover sender "resolve"
-  //sender samme ballongen videre inn i balloonRemover.
-  await balloonRemover(balloon);
-  return;
-}
-
-//balloonRemover funksjonen sender et "promise to resolve" ut sånn at balloonAnimation vet når setTimeout er ferdig.
-//dette betyr at animasjonen som er knytta til popped classen blir spilt i 300ms før balloon fjernes.
-balloonRemover = (balloon) => {
-  new Promise((resolve) => {
-    //set timeout som arrow function sånn at eg kan ha flere argumenter som skal bli kjørt når delayet er over.
-    setTimeout(() => {
-      balloon.remove();
-      resolve();
-    }, 300);
-  });
-};
-
-//Displayer hjerteSVG over balooncontainer basert på hvor mange liv man starter med.
-const lifeCount = () => {
-  for (let i = 0; i < life; i++) {
-    let heart = makeElement(
-      "img",
-      { src: "./img/life.svg" },
-      "heart",
-      heartContainer
-    );
-    //pusher det nye elementet til currentHearts array.
-    currentHearts.push(heart);
-  }
-};
-
-//funksjon som fjerner liv og hjerter.
-const removeLife = () => {
-  //finner alle hjerteikonene som er igjen.
-  let hearts = currentHearts;
-  //fjerner en av de.
-  hearts[0].remove();
-  hearts.shift();
-  life--;
-  //skjekker om vi har tapt.
-  if (life === 0) noLife();
-};
-
-//Skjekker hvor mange balloons som er laget, og fjerner liv hvis antallet går over et treshhold.
-const balloonChecker = () => {
-  if (totalBalloonCount > maxBalloon) {
-    removeLife();
-  }
-};
-
-//denne funksjonen kjører kun når life har blitt 0
-const noLife = () => {
-  //her stopper jeg begge intervallene.
-  clearInterval(balloonSpawner);
-  clearInterval(lifeTimer);
-  //jeg fjerner alle balloons
-  let balloons = document.querySelectorAll(".balloon");
-  balloons.forEach((balloon) => balloon.remove());
-  //skjekker om det er kommet en ny high score.
-  if (score > highScore) saveHighScore();
-  //resetter knapp og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
-  showMenu();
-  stopped = true;
-};
-
-//Funksjon som resetter spillet ved spillstart.
-function reset() {
-  //setter life, time og maxBalloon basert på difficulty objekt.
-  let difficulty = difficultySelection[difficultySelector.value];
-  life = difficulty.maxLife;
-  maxBalloon = difficulty.maxBalloon;
-  time = difficulty.time;
-  //resetter score og totalBalloonCount til 0
-  score = baseValues.score;
-  totalBalloonCount = baseValues.totalBalloonCount;
-  scoreCount.textContent = `Score: ${baseValues.score}`;
-  //starter balloonspawner og den som skjekker anntallet balloons.
-  balloonSpawner = setInterval(spawnBalloon, time);
-  lifeTimer = setInterval(balloonChecker, time);
-  //tømmer spawnedBalloon objektet.
-  spawnedBalloon = baseValues.spawnedBalloon;
-}
-
-//setter knapp og select inn på skjermen.
-function showMenu() {
-  balloonContainer.appendChild(startGameBtn);
-  balloonContainer.appendChild(difficultySelector);
-}
-
-//fjerner knapper og select fra skjermen.
-function removeMenu() {
-  startGameBtn.remove();
-  difficultySelector.remove();
-}
-
-//denne funksjonen kjører når spillet blir startet.
-const gameStart = () => {
-  reset();
-  //setter life, time og maxballoons til det som er bestemt av vanskelighetsgraden
-  lifeCount();
-  //fjerner startknappen og difficulty selector
-  removeMenu();
-};
-//funksjon som kjøres hvis en balloon er funnet.
-const balloonSelector = (letter) => {
-  //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i spawnedBalloon objectet.
-  let balloons = spawnedBalloon[letter].balloonElements;
-  //sender første arrayet inn i balloonAnimation.
-  balloonAnimation(balloons[0]);
-  //fjerner det første elementet i arrayet.
-  balloons.shift();
-  totalBalloonCount--;
-  return;
-};
-
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
 function gameEvent(keyStroke) {
   let letter = keyStroke.key.toUpperCase();
@@ -312,6 +321,8 @@ function gameEvent(keyStroke) {
     balloonSelector(letter);
   }
 }
+
+/* EVENT LISTENERS */
 
 //Hvis man bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
