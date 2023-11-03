@@ -209,7 +209,7 @@ const noLife = () => {
   if (score > highScore) saveHighScore();
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
   showMenu();
-  soundElements.backgroundMusic.audioEl.pause();
+  //soundElements.backgroundMusic.audioEl.pause();
   stopped = true;
 };
 
@@ -355,7 +355,7 @@ function gameEvent(keyStroke) {
   ) {
     //hvis bokstaven ikke er spawnet, eller alle elementene er vekke. mist liv.
     removeLife();
-    soundElements.soundEffects.error.audioEl.play();
+    //soundElements.soundEffects.error.audioEl.play();
     return;
   } else {
     //send bokstaven videre til balloonselector.
