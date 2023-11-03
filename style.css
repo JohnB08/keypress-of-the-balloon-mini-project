@@ -108,7 +108,29 @@ footer {
 .selector:hover {
   cursor: pointer;
 }
-@media only screen and (max-width: 800px) {
+@media only screen and (max-height: 800px) {
+  .ballooncontainer {
+    width: 500px;
+    height: 500px;
+  }
+  .btn {
+    font-size: 36px;
+  }
+  .heart {
+    height: 36px;
+    width: 36px;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 24px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  body {
+    padding-top: 0;
+  }
   .ballooncontainer {
     width: 350px;
     height: 350px;
