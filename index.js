@@ -62,15 +62,6 @@ startGameBtn.textContent = "Start Game!";
 
 difficultySelector.classList.add("selector");
 
-//prøver å gjøre spillet compatible på tlf med en hack
-const mobileCheck = () => {
-  if (window.innerWidth > 800) return;
-  else {
-    let hiddenInput = makeElement("input", { type: "text" }, "hiddenInput");
-    document.body.appendChild(hiddenInput);
-  }
-};
-
 //test object, prøver noe greier.
 const baseValues = {
   score: 0,
@@ -81,7 +72,7 @@ const baseValues = {
   maxBalloon: 0,
   stopped: true,
   totalBalloonCount: 0,
-  balloonObject: {},
+  gameObjects: {},
   currentHearts: [],
 };
 
@@ -107,7 +98,7 @@ life = baseValues.life;
 maxBalloon = baseValues.maxBalloon;
 stopped = baseValues.stopped;
 totalBalloonCount = baseValues.totalBalloonCount;
-balloonObject = baseValues.balloonObject;
+gameObjects = baseValues.gameObjects;
 currentHearts = baseValues.currentHearts;
 
 /* ON LOAD FUNCTIONS */
@@ -131,6 +122,15 @@ const makeElement = (type, properties, className) => {
   return element;
 };
 
+//prøver å gjøre spillet compatible på tlf med en hack
+const mobileCheck = () => {
+  if (window.innerWidth > 800) return;
+  else {
+    let hiddenInput = makeElement("input", { type: "text" }, "hiddenInput");
+    gameObject.hiddenInput = hiddenInput;
+    document.body.appendChild(hiddenInput);
+  }
+};
 mobileCheck();
 console.log(document);
 
@@ -224,8 +224,8 @@ function reset() {
   //starter balloonspawner og den som skjekker anntallet balloons.
   balloonSpawner = setInterval(spawnBalloon, time);
   lifeTimer = setInterval(balloonChecker, time);
-  //tømmer balloonObject objektet.
-  balloonObject = baseValues.balloonObject;
+  //tømmer gameObjects objektet.
+  gameObjects = baseValues.gameObjects;
 }
 
 //Lagrer ny highscore i localstorage hvis det har skjedd i noLife().
@@ -293,8 +293,8 @@ const balloonChecker = () => {
 
 //funksjon som kjøres hvis en balloon er funnet.
 const balloonSelector = (letter) => {
-  //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i balloonObject objectet.
-  let balloons = balloonObject[letter].balloonElements;
+  //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i gameObjects objectet.
+  let balloons = gameObjects[letter].balloonElements;
   //sender første arrayet inn i balloonAnimation.
   balloonAnimation(balloons[0]);
   //fjerner det første elementet i arrayet.
@@ -328,16 +328,16 @@ const spawnBalloon = () => {
   //Lager en if else, for å se om balloon med bokstav er blitt spawnet allerede.
   //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite
   //uten å måtte querySelectorAll etter .balloon classen som tidligere.
-  if (!balloonObject[balloon.textContent]) {
-    //lager et object, i balloonObject for denne bokstaven. Sender inn et element som er et Array av alle elementer hittil spawnet.
-    balloonObject[balloon.textContent] = {
+  if (!gameObjects[balloon.textContent]) {
+    //lager et object, i gameObjects for denne bokstaven. Sender inn et element som er et Array av alle elementer hittil spawnet.
+    gameObjects[balloon.textContent] = {
       balloonElements: [balloon],
     };
   } else {
     //hvis objectet allerede er spawnet, pusher jeg det nye elementet til balloonElements Arrayet.
-    balloonObject[balloon.textContent].balloonElements.push(balloon);
+    gameObjects[balloon.textContent].balloonElements.push(balloon);
   }
-  console.log(balloonObject[balloon.textContent].balloonElements);
+  console.log(gameObjects[balloon.textContent].balloonElements);
 };
 
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
@@ -345,8 +345,8 @@ function gameEvent(keyStroke) {
   let letter = keyStroke.key.toUpperCase();
   //skjekker om en balloon med den teksten i det hele tatt er blitt spawna.
   if (
-    !balloonObject[letter] ||
-    balloonObject[letter].balloonElements.length === 0
+    !gameObjects[letter] ||
+    gameObjects[letter].balloonElements.length === 0
   ) {
     //hvis bokstaven ikke er spawnet, eller alle elementene er vekke. mist liv.
     removeLife();
@@ -363,8 +363,7 @@ function gameEvent(keyStroke) {
 //Hvis man bruker knappen for å starte spillet.
 startGameBtn.addEventListener("click", (event) => {
   stopped = false;
-  if (window.innerWidth < 800) hiddenInput.focus();
-  gameStart();
+  if (window.innerWidth < 800) gameObject.hiddenInput.focus();
 });
 //Legger på en eventListener til hele dokumentet.
 document.addEventListener("keydown", (keyStroke) => {
