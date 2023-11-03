@@ -260,7 +260,7 @@ const gameStart = () => {
   lifeCount();
   //fjerner startknappen og difficulty selector
   removeMenu();
-  soundElements.backgroundMusic.audioEl.play();
+  //soundElements.backgroundMusic.audioEl.play();
 };
 
 /* BALLOON MANIPULATON */
@@ -355,7 +355,7 @@ function gameEvent(keyStroke) {
   ) {
     //hvis bokstaven ikke er spawnet, eller alle elementene er vekke. mist liv.
     removeLife();
-    //soundElements.soundEffects.error.audioEl.play();
+    soundElements.soundEffects.error.audioEl.play();
     return;
   } else {
     //send bokstaven videre til balloonselector.
