@@ -384,7 +384,7 @@ if (gameObjects.hiddenInput.isActive) {
   gameObjects.hiddenInput.inputEl.addEventListener(
     "beforeinput",
     (touchedKey) => {
-      gameEvent(touchedKey.data);
+      gameEvent(touchedKey.data.toLowerCase());
     }
   );
   //eventlistener på balloonContainer i tilfelle bruker klikker vekk tastaturet.
