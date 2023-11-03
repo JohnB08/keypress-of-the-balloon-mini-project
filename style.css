@@ -126,6 +126,9 @@ footer {
   h2 {
     font-size: 24px;
   }
+  footer {
+    width: 400px;
+  }
 }
 @media only screen and (max-width: 600px) {
   body {
