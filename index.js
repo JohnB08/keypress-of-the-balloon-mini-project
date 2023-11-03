@@ -391,8 +391,8 @@ if (gameObjects.hiddenInput.isActive) {
     gameObjects.hiddenInput.inputEl.focus({ preventScroll: true })
   );
 }
-//Legger på en eventListener til hele dokumentet.
 
+//Legger på en eventListener til hele dokumentet. Denne ser etter tastetrykk.
 document.addEventListener("keydown", (keyStroke) => {
   //Hvis spillet er stoppet, men enter er IKKE trykket, gjør ingenting.
   if (
