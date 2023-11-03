@@ -76,6 +76,7 @@ const baseValues = {
   currentHearts: [],
 };
 
+//Lager et object for sound effects, og hvor de er lagret, så jeg kan hente det inn senere.
 const soundElements = {
   backgroundMusic: {
     folder: "./music",
