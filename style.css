@@ -17,7 +17,7 @@ body {
 .ballooncontainer {
   width: 700px;
   height: 700px;
-  background-color: skyblue;
+  background-color: black;
   position: relative;
   display: grid;
   place-content: center;

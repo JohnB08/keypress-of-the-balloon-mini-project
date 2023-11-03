@@ -14,38 +14,38 @@ const startGameBtn = document.createElement("button");
 const difficultySelector = document.createElement("select");
 
 //lager et objektarray for vanskelighetsgrad. Ved å legge til et nytt objekt her, legges en ny vanskelighetsgrad til automatisk.
-const difficultySelection = [
-  {
+const difficultySelection = {
+  easy: {
     maxLife: 5,
-    time: 1000,
+    time: 750,
     maxBalloon: 50,
     text: "Easy",
   },
-  {
+  medium: {
     maxLife: 5,
-    time: 500,
+    time: 750,
     maxBalloon: 50,
     text: "Medium",
   },
-  {
+  hard: {
     maxLife: 3,
-    time: 500,
+    time: 750,
     maxBalloon: 25,
     text: "Hard",
   },
-  {
+  veryHard: {
     maxLife: 3,
-    time: 350,
+    time: 375,
     maxBalloon: 25,
     text: "Very Hard",
   },
-  {
+  apocalypse: {
     maxLife: 1,
-    time: 350,
+    time: 375,
     maxBalloon: 25,
     text: "Apocalypse Mode",
   },
-];
+};
 //Appender det som skal appendes.
 scoreContainer.appendChild(highScoreTracker);
 
@@ -62,7 +62,7 @@ startGameBtn.textContent = "Start Game!";
 
 difficultySelector.classList.add("selector");
 
-//predefinerer variabler jeg trenger til spillet.
+//test object, prøver noe greier.
 const baseValues = {
   score: 0,
   highScore: 0,
@@ -75,6 +75,20 @@ const baseValues = {
   balloonObject: {},
   currentHearts: [],
 };
+
+const soundElements = {
+  backgroundMusic: {
+    folder: "./music",
+    file: "/Beat Mekanik - Nocturnal.mp3",
+  },
+  soundEffects: {
+    folder: "./soundeffect",
+    error: {
+      file: "/Error.mp3",
+    },
+  },
+};
+//predefinerer variabler jeg trenger til spillet.
 //Gir alle "default" verdier så de blir lastet inn i memory.
 score = baseValues.score;
 highScore = baseValues.highScore;
@@ -91,7 +105,7 @@ currentHearts = baseValues.currentHearts;
 
 //Funksjon som lager element, tar in to ting:
 //string som er hvilken type element, og et object array med propertynavn -> property value, pluss initial CSS class, og hvor den skal appendes.
-const makeElement = (type, properties, className, appendLocation) => {
+const makeElement = (type, properties, className) => {
   const element = document.createElement(type);
 
   //tar alle keys og values og gjør de om til key/value arrays.
@@ -105,20 +119,28 @@ const makeElement = (type, properties, className, appendLocation) => {
     element[propertyName] = propertyValue;
   });
   element.classList.add(className);
-  appendLocation.appendChild(element);
   return element;
 };
 
+//lager bakgrunnsmusikkElementet
+soundElements.backgroundMusic.audioEl = makeElement("audio", {
+  src: `${soundElements.backgroundMusic.folder}${soundElements.backgroundMusic.file}`,
+});
+//lager audio element for error
+soundElements.soundEffects.error.audioEl = makeElement("audio", {
+  src: `${soundElements.soundEffects.folder}${soundElements.soundEffects.error.file}`,
+});
 //Her Lager jeg difficultyselection + alle options i en for Each loop.
-difficultySelection.forEach((difficulty) => {
-  makeElement(
-    "option",
-    {
-      textContent: difficulty.text,
-      value: difficultySelection.indexOf(difficulty),
-    },
-    "difficulty",
-    difficultySelector
+Object.keys(difficultySelection).forEach((difficulty) => {
+  difficultySelector.appendChild(
+    makeElement(
+      "option",
+      {
+        textContent: difficultySelection[difficulty].text,
+        value: Object.keys(difficultySelection).indexOf(difficulty),
+      },
+      "difficulty"
+    )
   );
 });
 //prøver å hente highscore fra local storage.
@@ -136,12 +158,8 @@ if (!localStorage.getItem("highScore")) {
 //Displayer hjerteSVG over balooncontainer basert på hvor mange liv man starter med.
 const lifeCount = () => {
   for (let i = 0; i < life; i++) {
-    let heart = makeElement(
-      "img",
-      { src: "./img/life.svg" },
-      "heart",
-      heartContainer
-    );
+    let heart = makeElement("img", { src: "./img/life.svg" }, "heart");
+    heartContainer.appendChild(heart);
     //pusher det nye elementet til currentHearts array.
     currentHearts.push(heart);
   }
@@ -172,6 +190,7 @@ const noLife = () => {
   if (score > highScore) saveHighScore();
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
   showMenu();
+  soundElements.backgroundMusic.audioEl.pause();
   stopped = true;
 };
 
@@ -180,10 +199,10 @@ const noLife = () => {
 //Funksjon som resetter spillet ved spillstart.
 function reset() {
   //setter life, time og maxBalloon basert på difficulty objekt.
-  let difficulty = difficultySelection[difficultySelector.value];
-  life = difficulty.maxLife;
-  maxBalloon = difficulty.maxBalloon;
-  time = difficulty.time;
+  let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
+  life = difficultySelection[difficulty].maxLife;
+  maxBalloon = difficultySelection[difficulty].maxBalloon;
+  time = difficultySelection[difficulty].time;
   //resetter score og totalBalloonCount til 0
   score = baseValues.score;
   totalBalloonCount = baseValues.totalBalloonCount;
@@ -222,6 +241,7 @@ const gameStart = () => {
   lifeCount();
   //fjerner startknappen og difficulty selector
   removeMenu();
+  soundElements.backgroundMusic.audioEl.play();
 };
 
 /* BALLOON MANIPULATON */
@@ -287,9 +307,9 @@ const spawnBalloon = () => {
       style: `top: ${yCoordinate}%; left: ${xCoordinate}%;`,
       textContent: randomLetter,
     },
-    "balloon",
-    balloonContainer
+    "balloon"
   );
+  balloonContainer.appendChild(balloon);
   totalBalloonCount++;
   //Lager en if else, for å se om balloon med bokstav er blitt spawnet allerede.
   //Denne if/else statementen + objectet som lages, gjør at jeg kan ha samme funksjonalitet som før rewrite
@@ -315,6 +335,7 @@ function gameEvent(keyStroke) {
   ) {
     //hvis bokstaven ikke er spawnet, eller alle elementene er vekke. mist liv.
     removeLife();
+    soundElements.soundEffects.error.audioEl.play();
     return;
   } else {
     //send bokstaven videre til balloonselector.
