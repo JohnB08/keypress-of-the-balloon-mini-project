@@ -385,8 +385,8 @@ if (gameObjects.hiddenInput.isActive) {
     "beforeinput",
     (touchedKey) => {
       gameEvent(touchedKey.data);
-      gameObjects.hiddenInput.inputEl.value = "";
-      console.log(gameObjects.hiddenInput.inputEl.value);
+      //prøver å fjerne valuen som ble skrevet inn.
+      gameObjects.hiddenInput.inputEl.reset();
     }
   );
   //eventlistener på balloonContainer i tilfelle bruker klikker vekk tastaturet.
