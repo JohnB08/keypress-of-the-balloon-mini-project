@@ -385,6 +385,7 @@ if (gameObjects.hiddenInput.isActive) {
     "beforeinput",
     (touchedKey) => {
       gameEvent(touchedKey.data);
+      gameObjects.hiddenInput.inputEl.value = "";
       console.log(gameObjects.hiddenInput.inputEl.value);
     }
   );
