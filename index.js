@@ -219,7 +219,7 @@ function reset() {
   gameObjects = baseValues.gameObjects;
 }
 
-//Lagrer ny highscore i localstorage hvis det har skjedd i noLife().
+//Lagrer ny highscore i localstorage hvis ny highscore er registrert i gameOver().
 function saveHighScore() {
   let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
   highScore = score;
@@ -366,11 +366,11 @@ function removeLife() {
   hearts.shift();
   life--;
   //skjekker om vi har tapt.
-  if (life === 0) noLife();
+  if (life === 0) gameOver();
 }
 
 //denne funksjonen kjører kun når life har blitt 0
-function noLife() {
+function gameOver() {
   //her stopper jeg begge intervallene.
   clearInterval(balloonSpawner);
   clearInterval(lifeTimer);
