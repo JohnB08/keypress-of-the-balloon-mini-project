@@ -7,11 +7,14 @@ const balloonContainer = document.querySelector(".ballooncontainer");
 
 const highScoreTracker = document.createElement("h2");
 
-const heartContainer = document.createElement("div");
+const heartContainer = makeElement("div", { className: "heartcontainer" });
 
-const startGameBtn = document.createElement("button");
+const startGameBtn = makeElement("button", {
+  className: "btn",
+  textContent: "Start Game!",
+});
 
-const difficultySelector = document.createElement("select");
+const difficultySelector = makeElement("select", { className: "selector" });
 
 //lager et objektarray for vanskelighetsgrad. Ved å legge til et nytt objekt her, legges en ny vanskelighetsgrad til automatisk.
 const difficultySelection = {
@@ -54,15 +57,6 @@ scoreContainer.appendChild(heartContainer);
 mobileCheck();
 
 showMenu();
-
-//adder styling til det som trenger styling.
-heartContainer.classList.add("heartcontainer");
-
-startGameBtn.classList.add("btn");
-
-startGameBtn.textContent = "Start Game!";
-
-difficultySelector.classList.add("selector");
 
 //test object, prøver noe greier.
 const baseValues = {
