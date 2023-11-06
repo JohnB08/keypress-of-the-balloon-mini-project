@@ -135,21 +135,6 @@ Object.keys(difficultySelection).forEach((difficulty) => {
   );
 });
 
-function getHighScore() {
-  //prøver å hente highscore fra local storage.
-  //experimenterer med å få localStorage til å virke.
-  //experimenterer med å lage forskjellige highscores for hver difficulty.
-  let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
-  if (!localStorage.getItem(difficulty)) {
-    highScore = baseValues.highScore;
-    highScoreTracker.textContent = `HighScore: ${highScore}`;
-  } else {
-    let savedHighScore = JSON.parse(localStorage.getItem(difficulty));
-    highScoreTracker.textContent = `HighScore: ${savedHighScore}`;
-    highScore = savedHighScore;
-  }
-}
-
 /* Utility og MediaQuery */
 
 //Funksjon som lager element, tar in to ting:
@@ -222,6 +207,21 @@ function reset() {
   gameObjects = baseValues.gameObjects;
 }
 
+function getHighScore() {
+  //prøver å hente highscore fra local storage.
+  //experimenterer med å få localStorage til å virke.
+  //experimenterer med å lage forskjellige highscores for hver difficulty.
+  let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
+  if (!localStorage.getItem(difficulty)) {
+    highScore = baseValues.highScore;
+    highScoreTracker.textContent = `HighScore: ${highScore}`;
+  } else {
+    let savedHighScore = JSON.parse(localStorage.getItem(difficulty));
+    highScoreTracker.textContent = `HighScore: ${savedHighScore}`;
+    highScore = savedHighScore;
+  }
+}
+
 //Lagrer ny highscore i localstorage hvis ny highscore er registrert i gameOver().
 //lagrer en highscore i localStorage til browser pr difficulty.
 function saveHighScore() {
@@ -242,7 +242,7 @@ function gameStart() {
   //soundElements.backgroundMusic.audioEl.play();
 }
 
-/* BALLOON MANIPULATON */
+/* SPILL FUNKSJONER. */
 
 //spawnBalloon funksjon. Lager en firkant med tekst i, og plasserer den en tilfeldig plass i balooncontainer elementet.
 function spawnBalloon() {
