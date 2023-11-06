@@ -132,16 +132,21 @@ Object.keys(difficultySelection).forEach((difficulty) => {
     })
   );
 });
-//prøver å hente highscore fra local storage.
-//experimenterer med å få localStorage til å virke.
-if (!localStorage.getItem("highScore")) {
-  highScoreTracker.textContent = `HighScore: ${highScore}`;
-} else {
-  let savedHighScore = JSON.parse(localStorage.getItem("highScore"));
-  highScoreTracker.textContent = `HighScore: ${savedHighScore}`;
-  highScore = savedHighScore;
-}
 
+function getHighScore() {
+  //prøver å hente highscore fra local storage.
+  //experimenterer med å få localStorage til å virke.
+  //experimenterer med å lage forskjellige highscores for hver difficulty.
+  let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
+  if (!localStorage.getItem(difficulty)) {
+    highScore = baseValues.highScore;
+    highScoreTracker.textContent = `HighScore: ${highScore}`;
+  } else {
+    let savedHighScore = JSON.parse(localStorage.getItem(difficulty));
+    highScoreTracker.textContent = `HighScore: ${savedHighScore}`;
+    highScore = savedHighScore;
+  }
+}
 /* Utility og MediaQuery */
 
 //Funksjon som lager element, tar in to ting:
@@ -202,6 +207,7 @@ function reset() {
   life = difficulty.maxLife;
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
+  getHighScore();
   //resetter score og totalBalloonCount til 0
   score = baseValues.score;
   totalBalloonCount = baseValues.totalBalloonCount;
@@ -215,9 +221,10 @@ function reset() {
 
 //Lagrer ny highscore i localstorage hvis det har skjedd i noLife().
 function saveHighScore() {
+  let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
   highScore = score;
-  localStorage.removeItem("highScore");
-  localStorage.setItem("highScore", JSON.stringify(highScore));
+  localStorage.removeItem(difficulty);
+  localStorage.setItem(difficulty, JSON.stringify(highScore));
   highScoreTracker.textContent = `HighScore: ${highScore}`;
 }
 //Neste prosjekt, se om jeg kan sette forskjellige highscores for forskjellige difficulties. Tror jeg kan hente .value fra selector, sette selector."difficultykey" som keyword.
