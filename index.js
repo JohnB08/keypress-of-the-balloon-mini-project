@@ -49,14 +49,6 @@ const difficultySelection = {
     text: "Apocalypse Mode",
   },
 };
-//Appender det som skal appendes.
-scoreContainer.appendChild(highScoreTracker);
-
-scoreContainer.appendChild(heartContainer);
-
-mobileCheck();
-
-showMenu();
 
 //test object, prøver noe greier.
 const baseValues = {
@@ -128,6 +120,15 @@ Object.keys(difficultySelection).forEach((difficulty) => {
     })
   );
 });
+
+//Appender det som skal appendes.
+scoreContainer.appendChild(highScoreTracker);
+
+scoreContainer.appendChild(heartContainer);
+
+mobileCheck();
+
+showMenu();
 
 /* Utility og MediaQuery */
 
