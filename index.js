@@ -117,11 +117,13 @@ soundElements.backgroundMusic.audioEl = makeElement("audio", {
   src: `${soundElements.backgroundMusic.folder}${soundElements.backgroundMusic.file}`,
   volume: "0.2",
 });
+
 //lager audio element for error
 soundElements.soundEffects.error.audioEl = makeElement("audio", {
   src: `${soundElements.soundEffects.folder}${soundElements.soundEffects.error.file}`,
   volume: "0.5",
 });
+
 //Her Lager jeg difficultyselection + alle options i en for Each loop.
 Object.keys(difficultySelection).forEach((difficulty) => {
   difficultySelector.appendChild(
@@ -147,6 +149,7 @@ function getHighScore() {
     highScore = savedHighScore;
   }
 }
+
 /* Utility og MediaQuery */
 
 //Funksjon som lager element, tar in to ting:
@@ -220,6 +223,7 @@ function reset() {
 }
 
 //Lagrer ny highscore i localstorage hvis ny highscore er registrert i gameOver().
+//lagrer en highscore i localStorage til browser pr difficulty.
 function saveHighScore() {
   let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
   highScore = score;
@@ -227,8 +231,6 @@ function saveHighScore() {
   localStorage.setItem(difficulty, JSON.stringify(highScore));
   highScoreTracker.textContent = `HighScore: ${highScore}`;
 }
-//Neste prosjekt, se om jeg kan sette forskjellige highscores for forskjellige difficulties. Tror jeg kan hente .value fra selector, sette selector."difficultykey" som keyword.
-//Så hente det ut.
 
 //denne funksjonen kjører når spillet blir startet.
 function gameStart() {
