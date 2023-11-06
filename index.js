@@ -283,6 +283,7 @@ function spawnBalloon() {
 //funksjon som kjøres hvis en balloon er funnet.
 function balloonSelector(letter) {
   //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i gameObjects objectet.
+  //definerer en ny variabel som elementarrayet, så det blir litt mer ryddig hva jeg sender videre inn i balloonAnimation.
   let balloons = gameObjects.balloons[letter].balloonElements;
   //sender første arrayet inn i balloonAnimation.
   balloonAnimation(balloons[0]);
@@ -306,7 +307,7 @@ async function balloonAnimation(balloon) {
 
 //balloonRemover funksjonen sender et "promise to resolve" ut sånn at balloonAnimation vet når setTimeout er ferdig.
 //dette betyr at animasjonen som er knytta til popped classen blir spilt i 300ms før balloon fjernes.
-balloonRemover = (balloon) => {
+async function balloonRemover(balloon) {
   new Promise((resolve) => {
     //set timeout som arrow function sånn at eg kan ha flere argumenter som skal bli kjørt når delayet er over.
     setTimeout(() => {
@@ -314,14 +315,14 @@ balloonRemover = (balloon) => {
       resolve();
     }, 300);
   });
-};
+}
 
 //Skjekker hvor mange balloons som er laget, og fjerner liv hvis antallet går over et treshhold.
-const balloonChecker = () => {
+function balloonChecker() {
   if (totalBalloonCount > maxBalloon) {
     removeLife();
   }
-};
+}
 
 //hovedfunksjon for spillet. Sammenligner knapper og ballongcontent, og ser om ballonger skal fjernes.
 function gameEvent(letter) {
