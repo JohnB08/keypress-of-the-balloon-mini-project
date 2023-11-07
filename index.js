@@ -111,6 +111,9 @@ const soundElements = {
     error: {
       file: "/Error.mp3",
     },
+    highScore: {
+      file: "/NewHighScore.mp3",
+    },
   },
 };
 
@@ -123,6 +126,12 @@ soundElements.backgroundMusic.audioEl = makeElement("audio", {
 //lager audio element for error
 soundElements.soundEffects.error.audioEl = makeElement("audio", {
   src: `${soundElements.soundEffects.folder}${soundElements.soundEffects.error.file}`,
+  volume: "0.5",
+});
+
+//lager audio element for high score
+soundElements.soundEffects.highScore.audioEl = makeElement("audio", {
+  src: `${soundElements.soundEffects.folder}${soundElements.soundEffects.highScore.file}`,
   volume: "0.5",
 });
 
@@ -181,6 +190,22 @@ function removeMenu() {
   titleText.remove();
   startGameBtn.remove();
   difficultySelector.remove();
+}
+
+//Funksjon som lager sluttmenyen etter spillet er ferdig.
+function endGameMenu() {
+  const endGameScreen = makeElement("div", { className: "endGameScreen" });
+  balloonContainer.appendChild(endGameScreen);
+  endGameScreen.appendChild(endGameText);
+  //hvis en ny highscore er registrert, vis new high score!
+  if (gameObjects.newHighScore) {
+    let highScoreText = makeElement("p", { textContent: "New High Score!" });
+    endGameScreen.appendChild(highScoreText);
+  }
+  endGameScreen.appendChild(restartBtn);
+  //setter texten til å vise score.
+  endGameText.textContent = `You Scored ${score}!`;
+  gameObjects.endGameScreen = endGameScreen;
 }
 
 //prøver å gjøre spillet compatible på tlf med en hack
@@ -413,17 +438,15 @@ function gameOver() {
     gameObjects.hiddenInput.inputEl.value = "";
   }
   //skjekker om det er kommet en ny high score.
-  if (score > highScore) saveHighScore();
+  if (score > highScore) {
+    gameObjects.newHighScore = score;
+    soundElements.soundEffects.highScore.audioEl.play();
+    saveHighScore();
+  } else gameObjects.newHighScore = null;
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
   stopMusic();
   //lager en endgame div og appender den til ballooncontainer
-  const endGameScreen = makeElement("div", { className: "endGameScreen" });
-  balloonContainer.appendChild(endGameScreen);
-  endGameScreen.appendChild(endGameText);
-  endGameScreen.appendChild(restartBtn);
-  //setter texten til å vise score.
-  endGameText.textContent = `You Scored ${score}!`;
-  gameObjects.endGameScreen = endGameScreen;
+  endGameMenu();
   stopped = true;
 }
 
