@@ -113,7 +113,7 @@ const soundElements = {
     },
     highScore: {
       file: "/NewHighScore.mp3",
-    },
+    }, // <---- dette kommaet skaper litt problemer ser eg, siden den leter etter en (soundeffects undefined.) får ikke fjerna det pga prettier. antar ting fremdeles funker
   },
 };
 
@@ -121,18 +121,15 @@ const soundElements = {
 soundElements.backgroundMusic.audioEl = makeElement("audio", {
   src: `${soundElements.backgroundMusic.folder}${soundElements.backgroundMusic.file}`,
   volume: "0.2",
+  loop: "true",
 });
 
-//lager audio element for error
-soundElements.soundEffects.error.audioEl = makeElement("audio", {
-  src: `${soundElements.soundEffects.folder}${soundElements.soundEffects.error.file}`,
-  volume: "0.5",
-});
-
-//lager audio element for high score
-soundElements.soundEffects.highScore.audioEl = makeElement("audio", {
-  src: `${soundElements.soundEffects.folder}${soundElements.soundEffects.highScore.file}`,
-  volume: "0.5",
+//lager soundeffect element for hver sound effect.
+Object.keys(soundElements.soundEffects).forEach((soundeffect) => {
+  soundElements.soundEffects[soundeffect].audioEl = makeElement("audio", {
+    src: `${soundElements.soundEffects.folder}${soundElements.soundEffects[soundeffect].file}`,
+    volume: "0.4",
+  });
 });
 
 //Her Lager jeg difficultyselection + alle options i en forEach loop.
