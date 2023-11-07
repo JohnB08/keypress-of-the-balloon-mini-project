@@ -168,6 +168,7 @@ function makeElement(type, properties) {
 
 //lager en funksjon for å appende tittel, knapp og selector.
 function showMenu() {
+  //fjerner endgamescreen, hvis den eksisterer.
   if (gameObjects.endGameScreen) gameObjects.endGameScreen.remove();
   gameObjects.endGameScreen = null;
   balloonContainer.appendChild(titleText);
@@ -415,10 +416,12 @@ function gameOver() {
   if (score > highScore) saveHighScore();
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
   stopMusic();
+  //lager en endgame div og appender den til ballooncontainer
   const endGameScreen = makeElement("div", { className: "endGameScreen" });
   balloonContainer.appendChild(endGameScreen);
   endGameScreen.appendChild(endGameText);
   endGameScreen.appendChild(restartBtn);
+  //setter texten til å vise score.
   endGameText.textContent = `You Scored ${score}!`;
   gameObjects.endGameScreen = endGameScreen;
   stopped = true;
@@ -446,6 +449,7 @@ document.addEventListener("keydown", (keyStroke) => {
     return;
   //Hvis spillet er stoppet, og enter er trykket, start spillet.
   else if (stopped && keyStroke.code === "Enter") {
+    //hvis endscreen er der, lukk den først med showMenu();
     if (gameObjects.endGameScreen) showMenu();
     else {
       stopped = false;
@@ -454,6 +458,23 @@ document.addEventListener("keydown", (keyStroke) => {
     //Hvis spillet er startet, kjør gameEvent for hver knapp.
     //bruker toUppercase for å normalisere inputen til stor bokstav.
   } else gameEvent(keyStroke.key.toUpperCase());
+});
+
+//en liten eventlistener på knappen i endgame menyen, for å lukke endgame.
+restartBtn.addEventListener("click", showMenu);
+
+//Eventlistener for mute knapp. ser etter "change" på checkboxen "mute".
+mute.addEventListener("click", () => {
+  if (!mute.checked) {
+    //bruker stopped variabelen her for å se om spillet kjører. Hvis ikke spillet kjører fortsetter den til neste.
+    if (!stopped) soundElements.backgroundMusic.audioEl.play();
+    muteLabel.classList.remove("muteActive");
+    muteLabel.textContent = "Mute Sounds?";
+  } else {
+    muteLabel.classList.add("muteActive");
+    muteLabel.textContent = "Muted!";
+    stopMusic();
+  }
 });
 
 /* EVENT LISTENER FOR MOBIL */
@@ -474,18 +495,3 @@ if (gameObjects.hiddenInput.isActive) {
     gameObjects.hiddenInput.inputEl.focus({ preventScroll: true })
   );
 }
-//Eventlistener for mute knapp. ser etter "change" på checkboxen "mute".
-mute.addEventListener("click", () => {
-  if (!mute.checked) {
-    //bruker stopped variabelen her for å se om spillet kjører. Hvis ikke spillet kjører fortsetter den til neste.
-    if (!stopped) soundElements.backgroundMusic.audioEl.play();
-    muteLabel.classList.remove("muteActive");
-    muteLabel.textContent = "Mute Sounds?";
-  } else {
-    muteLabel.classList.add("muteActive");
-    muteLabel.textContent = "Muted!";
-    stopMusic();
-  }
-});
-
-restartBtn.addEventListener("click", showMenu);
