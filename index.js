@@ -444,7 +444,13 @@ if (gameObjects.hiddenInput.isActive) {
   );
 }
 
-mute.addEventListener("change", () => {
-  if (!mute.checked) return;
-  else stopMusic();
+mute.addEventListener("click", () => {
+  if (!mute.checked) {
+    muteLabel.classList.remove("muteActive");
+    muteLabel.textContent = "Mute Sounds?";
+  } else {
+    muteLabel.classList.add("muteActive");
+    muteLabel.textContent = "Muted!";
+    stopMusic();
+  }
 });

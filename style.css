@@ -5,7 +5,7 @@
 body {
   display: grid;
   place-content: center;
-  padding-top: 5%;
+  padding-top: 1%;
   font-family: "Ubuntu", sans-serif;
   background-color: #e98a15;
 }
@@ -82,6 +82,30 @@ footer {
 }
 .hiddenInput:focus {
   outline: none;
+}
+.muteBtn {
+  width: 120px;
+  margin: 10px auto 10px auto;
+  background: snow;
+  padding: 0.25em 0.5em;
+  border-radius: 0.25em;
+  transition: 250ms ease-in-out;
+  text-align: center;
+}
+.muteBtn:hover {
+  background: green;
+  color: snow;
+}
+.muteActive {
+  background: green;
+  color: snow;
+}
+.muteActive:hover {
+  background: snow;
+  color: black;
+}
+#mute {
+  display: none;
 }
 @keyframes poppedBalloon {
   10% {
