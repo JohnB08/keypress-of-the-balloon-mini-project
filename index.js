@@ -32,7 +32,7 @@ const startGameBtn = makeElement("button", {
 
 const difficultySelector = makeElement("select", { className: "selector" });
 
-//lager et objektarray for vanskelighetsgrad. Ved å legge til et nytt objekt her, legges en ny vanskelighetsgrad til automatisk.
+//lager et objekt for vanskelighetsgrad. Ved å legge til et nytt objekt i objektet, legges en ny vanskelighetsgrad til automatisk.
 const difficultyObject = {
   easy: {
     maxLife: 5,
@@ -77,7 +77,13 @@ const baseValues = {
   maxBalloon: 0,
   stopped: true,
   totalBalloonCount: 0,
-  gameObjects: {},
+  gameObjects: {
+    hiddenInput: {
+      isActive: false,
+    },
+    balloons: {},
+    currentHearts: [],
+  },
 };
 
 //lager alle globale variabler jeg trenger i starten.
@@ -95,10 +101,6 @@ let {
   totalBalloonCount,
   gameObjects,
 } = baseValues;
-gameObjects.hiddenInput = {};
-gameObjects.balloons = {};
-gameObjects.hiddenInput.isActive = false;
-gameObjects.currentHearts = [];
 
 //Lager et object for sound effects og bakgrunnsmusikk, har en .folder som viser hvor de skal hentes. så en for hver fil.
 const soundElements = {
@@ -172,7 +174,7 @@ function makeElement(type, properties) {
   return element;
 }
 
-//lager en funksjon for å appende tittel, knapp og selector.
+//lager en funksjon for å appende tittel, knapp og selector, fjerner også evt endgame menyen om den er til stede.
 function showMenu() {
   //fjerner endgamescreen, hvis den eksisterer.
   if (gameObjects.endGameScreen) gameObjects.endGameScreen.remove();
@@ -220,29 +222,9 @@ function mobileCheck() {
   }
 }
 
-/* RESET, RESTART */
+/* HighScore funksjoner */
 
-//Funksjon som resetter spillet ved spillstart.
-function reset() {
-  //definerer global variables til det det skal være basert på difficulty
-  let difficulty =
-    difficultyObject[Object.keys(difficultyObject)[difficultySelector.value]];
-  life = difficulty.maxLife;
-  maxBalloon = difficulty.maxBalloon;
-  time = difficulty.time;
-  //ser om det finnes en highScore for difficulty.
-  getHighScore();
-  //resetter score og totalBalloonCount til baseValues
-  score = baseValues.score;
-  totalBalloonCount = baseValues.totalBalloonCount;
-  scoreCount.textContent = `Score: ${baseValues.score}`;
-  //starter balloonspawner og den som skjekker anntallet balloons.
-  balloonSpawner = setInterval(spawnBalloon, time);
-  balloonTimer = setInterval(balloonCountCheck, time);
-  //tømmer gameObjects objektet.
-  gameObjects = baseValues.gameObjects;
-}
-
+//funksjon som henter highscores fra local storage om de finnes.
 function getHighScore() {
   //prøver å hente highscore fra local storage.
   //experimenterer med å få localStorage til å virke.
@@ -269,6 +251,29 @@ function saveHighScore() {
   localStorage.removeItem(difficulty);
   localStorage.setItem(difficulty, JSON.stringify(highScore));
   highScoreTracker.textContent = `HighScore: ${highScore}`;
+}
+
+/* RESET, RESTART */
+
+//Funksjon som resetter spillet ved spillstart.
+function reset() {
+  //definerer global variables til det det skal være basert på difficulty
+  let difficulty =
+    difficultyObject[Object.keys(difficultyObject)[difficultySelector.value]];
+  life = difficulty.maxLife;
+  maxBalloon = difficulty.maxBalloon;
+  time = difficulty.time;
+  //ser om det finnes en highScore for difficulty.
+  getHighScore();
+  //resetter score og totalBalloonCount til baseValues
+  score = baseValues.score;
+  totalBalloonCount = baseValues.totalBalloonCount;
+  scoreCount.textContent = `Score: ${baseValues.score}`;
+  //starter balloonspawner og den som skjekker anntallet balloons.
+  balloonSpawner = setInterval(spawnBalloon, time);
+  balloonTimer = setInterval(balloonCountCheck, time);
+  //tømmer gameObjects objektet.
+  gameObjects = baseValues.gameObjects;
 }
 
 //denne funksjonen kjører når spillet blir startet.
