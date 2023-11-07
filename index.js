@@ -397,6 +397,12 @@ function gameOver() {
   balloons.forEach((balloon) => balloon.remove());
   //resetter balloon objektet.
   gameObjects.balloons = {};
+
+  //hvis man spiller på mobil, rengjør hiddenInput.
+  if (gameObjects.hiddenInput.isActive) {
+    gameObjects.hiddenInput.inputEl.blur();
+    gameObjects.hiddenInput.inputEl.value = "";
+  }
   //skjekker om det er kommet en ny high score.
   if (score > highScore) saveHighScore();
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
@@ -419,7 +425,7 @@ startGameBtn.addEventListener("click", () => {
 
 //Legger på en eventListener til hele dokumentet. Denne ser etter tastetrykk. Blir ignorert hvis man er på mobiltlf.
 document.addEventListener("keydown", (keyStroke) => {
-  //Hvis spillet er stoppet, men enter er IKKE trykket, gjør ingenting.
+  //Hvis spillet har startet i mobil mode, eller hvis spillet er stoppet og en annen knapp enn Enter er trykket, gjør ingenting.
   if (
     (stopped && keyStroke.code !== "Enter") ||
     gameObjects.hiddenInput.isActive
@@ -450,9 +456,10 @@ if (gameObjects.hiddenInput.isActive) {
     gameObjects.hiddenInput.inputEl.focus({ preventScroll: true })
   );
 }
-
+//Eventlistener for mute knapp. ser etter "change" på checkboxen "mute".
 mute.addEventListener("click", () => {
   if (!mute.checked) {
+    //bruker stopped variabelen her for å se om spillet kjører. Hvis ikke spillet kjører fortsetter den til neste.
     if (!stopped) soundElements.backgroundMusic.audioEl.play();
     muteLabel.classList.remove("muteActive");
     muteLabel.textContent = "Mute Sounds?";
