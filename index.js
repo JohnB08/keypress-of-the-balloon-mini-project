@@ -447,8 +447,10 @@ if (gameObjects.hiddenInput.isActive) {
   gameObjects.hiddenInput.inputEl.addEventListener(
     "beforeinput",
     (touchedKey) => {
+      //hvis noe blir copypasta inn, isteden for en og en bokstav, ignorer det.
+      if (touchedKey.data.length > 1) return;
       //bruker toUpperCase her også, bare for å standarisere input.
-      gameEvent(touchedKey.data.toUpperCase());
+      else gameEvent(touchedKey.data.toUpperCase());
     }
   );
   //eventlistener på balloonContainer i tilfelle bruker klikker vekk tastaturet.
