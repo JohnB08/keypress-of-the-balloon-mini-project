@@ -71,7 +71,6 @@ const baseValues = {
   stopped: true,
   totalBalloonCount: 0,
   gameObjects: {},
-  currentHearts: [],
 };
 
 //lager alle globale variabler jeg trenger i starten.
@@ -88,11 +87,11 @@ let {
   stopped,
   totalBalloonCount,
   gameObjects,
-  currentHearts,
 } = baseValues;
 gameObjects.hiddenInput = {};
 gameObjects.balloons = {};
 gameObjects.hiddenInput.isActive = false;
+gameObjects.currentHearts = [];
 
 //Lager et object for sound effects og bakgrunnsmusikk, har en .folder som viser hvor de skal hentes. så en for hver fil.
 const soundElements = {
@@ -160,14 +159,14 @@ function makeElement(type, properties) {
   return element;
 }
 
-//lager en funksjon for å appende knapp og selector.
+//lager en funksjon for å appende tittel, knapp og selector.
 function showMenu() {
   balloonContainer.appendChild(titleText);
   balloonContainer.appendChild(startGameBtn);
   balloonContainer.appendChild(difficultySelector);
 }
 
-//fjerner knapper og select fra skjermen.
+//fjerner tittel, knapper og select fra skjermen.
 function removeMenu() {
   titleText.remove();
   startGameBtn.remove();
@@ -196,7 +195,6 @@ function reset() {
   //definerer global variables til det det skal være basert på difficulty
   let difficulty =
     difficultyObject[Object.keys(difficultyObject)[difficultySelector.value]];
-  console.log(difficulty);
   life = difficulty.maxLife;
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
@@ -252,6 +250,7 @@ function gameStart() {
   if (!mute.checked) soundElements.backgroundMusic.audioEl.play();
 }
 
+//funksjon for å stoppe musikken igjen.
 function stopMusic() {
   soundElements.backgroundMusic.audioEl.pause();
   soundElements.backgroundMusic.audioEl.currentTime = 0;
@@ -369,15 +368,15 @@ function displayLife() {
       className: "heart",
     });
     heartContainer.appendChild(heart);
-    //pusher det nye elementet til currentHearts array.
-    currentHearts.push(heart);
+    //pusher det nye elementet til gameObjects.currentHearts array.
+    gameObjects.currentHearts.push(heart);
   }
 }
 
 //funksjon som fjerner liv og hjerter.
 function removeLife() {
   //finner alle hjerteikonene som er igjen.
-  let hearts = currentHearts;
+  let hearts = gameObjects.currentHearts;
   //fjerner en av de.
   hearts[0].remove();
   //prøvde å bruke push pop her, men den slet med å finne rett html element uten loop, hvis jeg gjorde det sånn. Nå trenger jeg ikke en loop.
