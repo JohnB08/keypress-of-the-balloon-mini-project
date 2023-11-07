@@ -5,6 +5,10 @@ const scoreCount = document.querySelector(".scorecontainer h1");
 
 const balloonContainer = document.querySelector(".ballooncontainer");
 
+const muteLabel = document.querySelector("#muteLabel");
+
+const mute = document.querySelector("#mute");
+
 const highScoreTracker = document.createElement("h2");
 
 const heartContainer = makeElement("div", { className: "heartcontainer" });
@@ -17,10 +21,10 @@ const startGameBtn = makeElement("button", {
 const difficultySelector = makeElement("select", { className: "selector" });
 
 //lager et objektarray for vanskelighetsgrad. Ved å legge til et nytt objekt her, legges en ny vanskelighetsgrad til automatisk.
-const difficultySelection = {
+const difficultyObject = {
   easy: {
     maxLife: 5,
-    time: 750,
+    time: 1125,
     maxBalloon: 50,
     text: "Easy",
   },
@@ -31,9 +35,9 @@ const difficultySelection = {
     text: "Medium",
   },
   hard: {
-    maxLife: 3,
-    time: 750,
-    maxBalloon: 25,
+    maxLife: 5,
+    time: 375,
+    maxBalloon: 50,
     text: "Hard",
   },
   veryHard: {
@@ -50,12 +54,13 @@ const difficultySelection = {
   },
 };
 
-//test object, prøver noe greier.
+//Har et object, hvor eg predefinerer standard values for de globale variablene mine,
+// både for å kunne lage alle global variablene on load, men også sånn at jeg kan lett sette de tilbake senere hvis jeg trenger.
 const baseValues = {
   score: 0,
   highScore: 0,
   balloonSpawner: null,
-  lifeTimer: null,
+  balloonTimer: null,
   life: 5,
   maxBalloon: 0,
   stopped: true,
@@ -64,15 +69,15 @@ const baseValues = {
   currentHearts: [],
 };
 
-//predefinerer variabler jeg trenger til spillet.
+//lager alle globale variabler jeg trenger i starten.
 //Gir alle "default" verdier så de blir lastet inn i memory.
-//bruker dekonstruering av baseValues objectet for å sette alle variablene til verdien de har i baseValues.
+//bruker dekonstruering av baseValues objectet for å lage alle variablene eg har i baseValues objektet.
 
 let {
   score,
   highScore,
   balloonSpawner,
-  lifeTimer,
+  balloonTimer,
   life,
   maxBalloon,
   stopped,
@@ -84,7 +89,7 @@ gameObjects.hiddenInput = {};
 gameObjects.balloons = {};
 gameObjects.hiddenInput.isActive = false;
 
-//Lager et object for sound effects, og hvor de er lagret, så jeg kan hente det inn senere.
+//Lager et object for sound effects og bakgrunnsmusikk, har en .folder som viser hvor de skal hentes. så en for hver fil.
 const soundElements = {
   backgroundMusic: {
     folder: "./music",
@@ -110,12 +115,13 @@ soundElements.soundEffects.error.audioEl = makeElement("audio", {
   volume: "0.5",
 });
 
-//Her Lager jeg difficultyselection + alle options i en for Each loop.
-Object.keys(difficultySelection).forEach((difficulty) => {
+//Her Lager jeg difficultyselection + alle options i en forEach loop.
+//bruker Object.keys for å lage et array for alle keys i difficultyObject
+Object.keys(difficultyObject).forEach((difficulty) => {
   difficultySelector.appendChild(
     makeElement("option", {
-      textContent: difficultySelection[difficulty].text,
-      value: Object.keys(difficultySelection).indexOf(difficulty),
+      textContent: difficultyObject[difficulty].text,
+      value: Object.keys(difficultyObject).indexOf(difficulty),
       className: "difficulty",
     })
   );
@@ -136,7 +142,6 @@ showMenu();
 //string som er hvilken type element, og et object array med propertynavn -> property value, pluss initial CSS class, og hvor den skal appendes.
 function makeElement(type, properties) {
   const element = document.createElement(type);
-
   //tar alle keys og values og gjør de om til key/value arrays.
   const elementProperties = Object.entries(properties);
   elementProperties.forEach((property) => {
@@ -181,23 +186,22 @@ function mobileCheck() {
 
 //Funksjon som resetter spillet ved spillstart.
 function reset() {
-  //setter life, time og maxBalloon basert på difficulty objekt.
+  //definerer global variables til det det skal være basert på difficulty
   let difficulty =
-    difficultySelection[
-      Object.keys(difficultySelection)[difficultySelector.value]
-    ];
+    difficultyObject[Object.keys(difficultyObject)[difficultySelector.value]];
   console.log(difficulty);
   life = difficulty.maxLife;
   maxBalloon = difficulty.maxBalloon;
   time = difficulty.time;
+  //ser om det finnes en highScore for difficulty.
   getHighScore();
-  //resetter score og totalBalloonCount til 0
+  //resetter score og totalBalloonCount til baseValues
   score = baseValues.score;
   totalBalloonCount = baseValues.totalBalloonCount;
   scoreCount.textContent = `Score: ${baseValues.score}`;
   //starter balloonspawner og den som skjekker anntallet balloons.
   balloonSpawner = setInterval(spawnBalloon, time);
-  lifeTimer = setInterval(balloonChecker, time);
+  balloonTimer = setInterval(balloonCountCheck, time);
   //tømmer gameObjects objektet.
   gameObjects = baseValues.gameObjects;
 }
@@ -206,7 +210,10 @@ function getHighScore() {
   //prøver å hente highscore fra local storage.
   //experimenterer med å få localStorage til å virke.
   //experimenterer med å lage forskjellige highscores for hver difficulty.
-  let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
+  //har skjønt at siden localStorage bare vil ha strings, kan jeg bruke Object.keys igjen. For da får jeg ut hver "key" som en string.
+  //kan bruke dette for å lage en identifier i localStorage for hver vanskelighetsgrad. Hvilken "key" er bestemt av valuen til selector.
+  //Siden value til selector alltid vil samsvare til en index i på Object.keys(difficultyObject) arrayet, så funker dette bra.
+  let difficulty = Object.keys(difficultyObject)[difficultySelector.value];
   if (!localStorage.getItem(difficulty)) {
     highScore = baseValues.highScore;
     highScoreTracker.textContent = `HighScore: ${highScore}`;
@@ -220,7 +227,7 @@ function getHighScore() {
 //Lagrer ny highscore i localstorage hvis ny highscore er registrert i gameOver().
 //lagrer en highscore i localStorage til browser pr difficulty.
 function saveHighScore() {
-  let difficulty = Object.keys(difficultySelection)[difficultySelector.value];
+  let difficulty = Object.keys(difficultyObject)[difficultySelector.value];
   highScore = score;
   localStorage.removeItem(difficulty);
   localStorage.setItem(difficulty, JSON.stringify(highScore));
@@ -234,7 +241,13 @@ function gameStart() {
   displayLife();
   //fjerner startknappen og difficulty selector
   removeMenu();
-  //soundElements.backgroundMusic.audioEl.play();
+  //starter bakgrunnsmusikk
+  if (!mute.checked) soundElements.backgroundMusic.audioEl.play();
+}
+
+function stopMusic() {
+  soundElements.backgroundMusic.audioEl.pause();
+  soundElements.backgroundMusic.audioEl.currentTime = 0;
 }
 
 /* SPILL FUNKSJONER. */
@@ -278,13 +291,14 @@ function spawnBalloon() {
 }
 
 //funksjon som kjøres hvis en balloon er funnet.
-function balloonSelector(letter) {
+function findBalloonElement(letter) {
   //Jeg vil bare fjerne en og en balloon. Gjør dette ved å hente elementArrayet mitt i gameObjects objectet.
   //definerer en ny variabel som elementarrayet, så det blir litt mer ryddig hva jeg sender videre inn i balloonAnimation.
   let balloons = gameObjects.balloons[letter].balloonElements;
   //sender første arrayet inn i balloonAnimation.
   balloonAnimation(balloons[0]);
   //fjerner det første elementet i arrayet.
+  //å bruke shift her var den mest ryddige måten å gjøre det på, uten å trenge loop. .pop() skapte problemer med at den prøvde å fjerne samme element om igjen og om igjen.
   balloons.shift();
   totalBalloonCount--;
   return;
@@ -315,7 +329,7 @@ async function balloonRemover(balloon) {
 }
 
 //Skjekker hvor mange balloons som er laget, og fjerner liv hvis antallet går over et treshhold.
-function balloonChecker() {
+function balloonCountCheck() {
   if (totalBalloonCount > maxBalloon) {
     removeLife();
   }
@@ -330,11 +344,11 @@ function gameEvent(letter) {
   ) {
     //hvis bokstaven ikke er spawnet, eller alle elementene er vekke. mist liv.
     removeLife();
-    soundElements.soundEffects.error.audioEl.play();
+    if (!mute.checked) soundElements.soundEffects.error.audioEl.play();
     return;
   } else {
     //send bokstaven videre til balloonselector.
-    balloonSelector(letter);
+    findBalloonElement(letter);
   }
 }
 
@@ -370,7 +384,7 @@ function removeLife() {
 function gameOver() {
   //her stopper jeg begge intervallene.
   clearInterval(balloonSpawner);
-  clearInterval(lifeTimer);
+  clearInterval(balloonTimer);
   //jeg fjerner alle balloons som finnes.
   let balloons = document.querySelectorAll(".balloon");
   balloons.forEach((balloon) => balloon.remove());
@@ -380,7 +394,7 @@ function gameOver() {
   if (score > highScore) saveHighScore();
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
   showMenu();
-  //soundElements.backgroundMusic.audioEl.pause();
+  stopMusic();
   stopped = true;
 }
 
@@ -429,3 +443,8 @@ if (gameObjects.hiddenInput.isActive) {
     gameObjects.hiddenInput.inputEl.focus({ preventScroll: true })
   );
 }
+
+mute.addEventListener("change", () => {
+  if (!mute.checked) return;
+  else stopMusic();
+});
