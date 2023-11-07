@@ -9,6 +9,13 @@ const muteLabel = document.querySelector("#muteLabel");
 
 const mute = document.querySelector("#mute");
 
+const endGameText = document.createElement("h3");
+
+const restartBtn = makeElement("button", {
+  className: "btn",
+  textContent: "Try Again?",
+});
+
 const highScoreTracker = document.createElement("h2");
 
 const titleText = makeElement("p", {
@@ -161,6 +168,8 @@ function makeElement(type, properties) {
 
 //lager en funksjon for å appende tittel, knapp og selector.
 function showMenu() {
+  if (gameObjects.endGameScreen) gameObjects.endGameScreen.remove();
+  gameObjects.endGameScreen = null;
   balloonContainer.appendChild(titleText);
   balloonContainer.appendChild(startGameBtn);
   balloonContainer.appendChild(difficultySelector);
@@ -405,8 +414,13 @@ function gameOver() {
   //skjekker om det er kommet en ny high score.
   if (score > highScore) saveHighScore();
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
-  showMenu();
   stopMusic();
+  const endGameScreen = makeElement("div", { className: "endGameScreen" });
+  balloonContainer.appendChild(endGameScreen);
+  endGameScreen.appendChild(endGameText);
+  endGameScreen.appendChild(restartBtn);
+  endGameText.textContent = `You Scored ${score}!`;
+  gameObjects.endGameScreen = endGameScreen;
   stopped = true;
 }
 
@@ -432,8 +446,11 @@ document.addEventListener("keydown", (keyStroke) => {
     return;
   //Hvis spillet er stoppet, og enter er trykket, start spillet.
   else if (stopped && keyStroke.code === "Enter") {
-    stopped = false;
-    gameStart();
+    if (gameObjects.endGameScreen) showMenu();
+    else {
+      stopped = false;
+      gameStart();
+    }
     //Hvis spillet er startet, kjør gameEvent for hver knapp.
     //bruker toUppercase for å normalisere inputen til stor bokstav.
   } else gameEvent(keyStroke.key.toUpperCase());
@@ -470,3 +487,5 @@ mute.addEventListener("click", () => {
     stopMusic();
   }
 });
+
+restartBtn.addEventListener("click", showMenu);
