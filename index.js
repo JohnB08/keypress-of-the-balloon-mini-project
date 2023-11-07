@@ -11,6 +11,11 @@ const mute = document.querySelector("#mute");
 
 const highScoreTracker = document.createElement("h2");
 
+const titleText = makeElement("p", {
+  className: "header",
+  textContent: "Typing Survivor",
+});
+
 const heartContainer = makeElement("div", { className: "heartcontainer" });
 
 const startGameBtn = makeElement("button", {
@@ -157,12 +162,14 @@ function makeElement(type, properties) {
 
 //lager en funksjon for å appende knapp og selector.
 function showMenu() {
+  balloonContainer.appendChild(titleText);
   balloonContainer.appendChild(startGameBtn);
   balloonContainer.appendChild(difficultySelector);
 }
 
 //fjerner knapper og select fra skjermen.
 function removeMenu() {
+  titleText.remove();
   startGameBtn.remove();
   difficultySelector.remove();
 }
@@ -446,6 +453,7 @@ if (gameObjects.hiddenInput.isActive) {
 
 mute.addEventListener("click", () => {
   if (!mute.checked) {
+    if (!stopped) soundElements.backgroundMusic.audioEl.play();
     muteLabel.classList.remove("muteActive");
     muteLabel.textContent = "Mute Sounds?";
   } else {

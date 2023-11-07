@@ -23,6 +23,7 @@ body {
   display: grid;
   place-content: center;
   gap: 10px;
+  border-radius: 10px;
 }
 .heartcontainer {
   display: flex;
@@ -32,6 +33,13 @@ body {
 .heart {
   width: 48px;
   height: 48px;
+}
+
+/* styling til titteltext */
+.header {
+  color: snow;
+  font-size: 48px;
+  text-align: center;
 }
 /* styling til knappen som blir laget i JS */
 .btn {
@@ -73,7 +81,9 @@ body {
   animation: poppedBalloon 1s ease-in-out;
 }
 footer {
+  justify-self: center;
   width: 600px;
+  text-align: center;
 }
 .hiddenInput {
   opacity: 0;
