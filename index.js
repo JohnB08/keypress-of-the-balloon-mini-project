@@ -9,8 +9,6 @@ const muteLabel = document.querySelector("#muteLabel");
 
 const mute = document.querySelector("#mute");
 
-const endGameText = document.createElement("h3");
-
 const restartBtn = makeElement("button", {
   className: "btn",
   textContent: "Try Again?",
@@ -194,8 +192,12 @@ function removeMenu() {
 //Funksjon som lager sluttmenyen etter spillet er ferdig.
 function endGameMenu() {
   const endGameScreen = makeElement("div", { className: "endGameScreen" });
+  const endGameText = document.createElement("h2");
+  const endGameScore = document.createElement("h3");
   balloonContainer.appendChild(endGameScreen);
+  endGameText.textContent = "Game Over!";
   endGameScreen.appendChild(endGameText);
+  endGameScreen.appendChild(endGameScore);
   //hvis en ny highscore er registrert, vis new high score!
   if (gameObjects.newHighScore) {
     let highScoreText = makeElement("p", { textContent: "New High Score!" });
@@ -203,7 +205,7 @@ function endGameMenu() {
   }
   endGameScreen.appendChild(restartBtn);
   //setter texten til å vise score.
-  endGameText.textContent = `You Scored ${score}!`;
+  endGameScore.textContent = `You Scored ${score}!`;
   gameObjects.endGameScreen = endGameScreen;
 }
 
