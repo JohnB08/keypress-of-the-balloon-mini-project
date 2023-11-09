@@ -282,7 +282,7 @@ function reset() {
   //resetter score og totalBalloonCount til baseValues
   score = baseValues.score;
   totalBalloonCount = baseValues.totalBalloonCount;
-  scoreCount.textContent = `Score: ${baseValues.score}`;
+  scoreCount.textContent = `Score: ${score}`;
   //starter balloonspawner og den som skjekker anntallet balloons.
   balloonSpawner = setInterval(spawnBalloon, time);
   balloonTimer = setInterval(balloonCountCheck, time);
