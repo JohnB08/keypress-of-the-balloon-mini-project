@@ -1,7 +1,7 @@
 //Henter inn eller lager de få statiske HTML elementene jeg trenger.
 const scoreContainer = document.querySelector(".scorecontainer");
 
-const scoreCount = document.querySelector(".scorecontainer h1");
+const scoreCount = document.querySelector(".scoreCount");
 
 const balloonContainer = document.querySelector(".ballooncontainer");
 
@@ -222,6 +222,14 @@ function mobileCheck() {
   }
 }
 
+//funksjon som resetter hiddeninput hvis man er på mobil
+function resetHiddenInput() {
+  if (gameObjects.hiddenInput.isActive) {
+    gameObjects.hiddenInput.inputEl.blur();
+    gameObjects.hiddenInput.inputEl.value = "";
+  }
+}
+
 /* HighScore funksjoner */
 
 //funksjon som henter highscores fra local storage om de finnes.
@@ -232,15 +240,20 @@ function getHighScore() {
   //har skjønt at siden localStorage bare vil ha strings, kan jeg bruke Object.keys igjen. For da får jeg ut hver "key" som en string.
   //kan bruke dette for å lage en identifier i localStorage for hver vanskelighetsgrad. Hvilken "key" er bestemt av valuen til selector.
   //Siden value til selector alltid vil samsvare til en index i på Object.keys(difficultyObject) arrayet, så funker dette bra.
+  //bruker else||or for å sette highScore til enten localStorage highscore, eller basevalue highscore, basert på hva som eksisterer.
   let difficulty = Object.keys(difficultyObject)[difficultySelector.value];
-  if (!localStorage.getItem(difficulty)) {
-    highScore = baseValues.highScore;
-    highScoreTracker.textContent = `HighScore: ${highScore}`;
-  } else {
-    let savedHighScore = JSON.parse(localStorage.getItem(difficulty));
-    highScoreTracker.textContent = `HighScore: ${savedHighScore}`;
-    highScore = savedHighScore;
-  }
+  highScore =
+    JSON.parse(localStorage.getItem(difficulty)) || baseValues.highScore;
+  highScoreTracker.textContent = `High Score: ${highScore}`;
+}
+
+//Funksjon som skjekker om det er kommet en ny highscore etter endt spill.
+function highScoreChecker() {
+  if (score > highScore) {
+    gameObjects.newHighScore = score;
+    soundElements.soundEffects.highScore.audioEl.play();
+    saveHighScore();
+  } else gameObjects.newHighScore = null;
 }
 
 //Lagrer ny highscore i localstorage hvis ny highscore er registrert i gameOver().
@@ -248,7 +261,6 @@ function getHighScore() {
 function saveHighScore() {
   let difficulty = Object.keys(difficultyObject)[difficultySelector.value];
   highScore = score;
-  localStorage.removeItem(difficulty);
   localStorage.setItem(difficulty, JSON.stringify(highScore));
   highScoreTracker.textContent = `HighScore: ${highScore}`;
 }
@@ -371,6 +383,15 @@ async function balloonRemover(balloon) {
   });
 }
 
+//funksjon som fjerner ALLE balloon element
+function resetAllBalloons() {
+  //jeg fjerner alle balloons som finnes.
+  let balloons = document.querySelectorAll(".balloon");
+  balloons.forEach((balloon) => balloon.remove());
+  //resetter balloon objektet.
+  gameObjects.balloons = {};
+}
+
 //Skjekker hvor mange balloons som er laget, og fjerner liv hvis antallet går over et treshhold.
 function balloonCountCheck() {
   if (totalBalloonCount > maxBalloon) {
@@ -428,23 +449,12 @@ function gameOver() {
   //her stopper jeg begge intervallene.
   clearInterval(balloonSpawner);
   clearInterval(balloonTimer);
-  //jeg fjerner alle balloons som finnes.
-  let balloons = document.querySelectorAll(".balloon");
-  balloons.forEach((balloon) => balloon.remove());
-  //resetter balloon objektet.
-  gameObjects.balloons = {};
-
+  //fjerner alle balloonelement
+  resetAllBalloons();
   //hvis man spiller på mobil, rengjør hiddenInput.
-  if (gameObjects.hiddenInput.isActive) {
-    gameObjects.hiddenInput.inputEl.blur();
-    gameObjects.hiddenInput.inputEl.value = "";
-  }
+  resetHiddenInput();
   //skjekker om det er kommet en ny high score.
-  if (score > highScore) {
-    gameObjects.newHighScore = score;
-    soundElements.soundEffects.highScore.audioEl.play();
-    saveHighScore();
-  } else gameObjects.newHighScore = null;
+  highScoreChecker();
   //Viser menyen igjen og setter stopped til true, sånn at alle keypress utenom enter blir ignorert.
   stopMusic();
   //lager en endgame div og appender den til ballooncontainer
