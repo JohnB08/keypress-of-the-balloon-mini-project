@@ -8,3 +8,7 @@ To play: type each letter as they spawn. There is no timelimit on how long a let
 but if too many letters are spawned at once, the player will start loosing life, and eventually game over.
 
 ![image](https://github.com/JohnB08/keypress-of-the-balloon-mini-project/assets/142892183/e2cdf1d7-ca36-482c-9aac-604bfdc25071)
+
+
+
+Highscore server: <a href="https://github.com/JohnB08/server"> Servercode </a>
