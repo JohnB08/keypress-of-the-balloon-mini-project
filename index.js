@@ -190,7 +190,7 @@ function removeMenu() {
 }
 
 //Funksjon som lager sluttmenyen etter spillet er ferdig.
-function endGameMenu() {
+async function endGameMenu() {
   const endGameScreen = makeElement("div", { className: "endGameScreen" });
   const endGameText = document.createElement("h2");
   const endGameScore = document.createElement("h3");
@@ -198,15 +198,100 @@ function endGameMenu() {
   endGameText.textContent = "Game Over!";
   endGameScreen.appendChild(endGameText);
   endGameScreen.appendChild(endGameScore);
+  const highscoreList = await fetchHighscoreFromServer();
+  console.log(highscoreList);
+  const highscoreTitle = document.createElement("h3");
+  highscoreTitle.textContent = "Global Highscores!";
+  endGameScreen.appendChild(highscoreTitle);
+  const displayHighscores = document.createElement("ol");
+  highscoreList.data.forEach((entry) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${entry.username}: ${entry.highscore}`;
+    displayHighscores.appendChild(listItem);
+  });
+  endGameScreen.appendChild(displayHighscores);
+  const beatScore = checkHighscoreList(highscoreList);
+  console.log(beatScore);
+  if (beatScore) {
+    const difficulty = Object.keys(difficultyObject)[difficultySelector.value];
+    const nameInput = document.createElement("input");
+    const nameLable = document.createElement("label");
+    const nameButton = document.createElement("button");
+    const inputContainer = document.createElement("div");
+    nameButton.textContent = "Send!";
+    nameInput.id = "userNameInput";
+    nameInput.type = "text";
+    nameLable.setAttribute("for", "userNameInput");
+    nameLable.textContent = "Type a username to post your Highscore!";
+    nameButton.addEventListener("click", async () => {
+      if (nameInput.value.length < 1 || nameInput.value.length > 8) return;
+      else await setHighScore(nameInput.value, score, difficulty);
+      nameInput.remove();
+      nameLable.remove();
+      nameButton.remove();
+    });
+    inputContainer.append(nameLable, nameInput, nameButton);
+    endGameScreen.appendChild(inputContainer);
+  }
   //hvis en ny highscore er registrert, vis new high score!
   if (gameObjects.newHighScore) {
     let highScoreText = makeElement("p", { textContent: "New High Score!" });
     endGameScreen.appendChild(highScoreText);
   }
   endGameScreen.appendChild(restartBtn);
+
   //setter texten til å vise score.
   endGameScore.textContent = `You Scored ${score}!`;
   gameObjects.endGameScreen = endGameScreen;
+}
+
+async function setHighScore(username, highscore, difficulty) {
+  const header = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: username,
+      highscore: highscore,
+      difficulty: difficulty,
+    }),
+  };
+  const response = await fetch(
+    "https://servertest-cmw7.onrender.com/setscore",
+    header
+  );
+  const result = await response.json();
+  return result;
+}
+
+function checkHighscoreList(highscoreList) {
+  console.log(highscoreList);
+  if (!highscoreList.message) return false;
+  const highscores = highscoreList.data;
+  if (highscoreList.data.length === 0) return true;
+  let beatScore = false;
+  highscores.forEach((entries) => {
+    if (score > entries.highscore) {
+      beatScore = true;
+    }
+  });
+
+  return beatScore;
+}
+
+async function fetchHighscoreFromServer() {
+  const difficulty = Object.keys(difficultyObject)[difficultySelector.value];
+  console.log(difficulty);
+  const difficultyHeader = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ difficulty: difficulty }),
+  };
+  const response = await fetch(
+    "https://servertest-cmw7.onrender.com/highscore",
+    difficultyHeader
+  );
+  const result = await response.json();
+  return result;
 }
 
 //prøver å gjøre spillet compatible på tlf med en hack
