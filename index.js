@@ -198,8 +198,14 @@ async function endGameMenu() {
   endGameText.textContent = "Game Over!";
   endGameScreen.appendChild(endGameText);
   endGameScreen.appendChild(endGameScore);
+  const loadingDisplay = makeElement("div", {
+    className: "loadingDisplay",
+    textContent: "Loading Highscores...",
+  });
+  endGameScreen.append(loadingDisplay);
   const highscoreList = await fetchHighscoreFromServer();
   console.log(highscoreList);
+  loadingDisplay.remove();
   const highscoreTitle = document.createElement("h3");
   highscoreTitle.textContent = "Global Highscores!";
   endGameScreen.appendChild(highscoreTitle);
@@ -224,8 +230,10 @@ async function endGameMenu() {
     nameLable.setAttribute("for", "userNameInput");
     nameLable.textContent = "Type a username to post your Highscore!";
     nameButton.addEventListener("click", async () => {
-      if (nameInput.value.length < 1 || nameInput.value.length > 8) return;
-      else await setHighScore(nameInput.value, score, difficulty);
+      if (nameInput.value.length < 1 || nameInput.value.length > 8) {
+        nameLable.textContent = "Please limit username size to 8.";
+        nameLable.style.color = "Red";
+      } else await setHighScore(nameInput.value, score, difficulty);
       nameInput.remove();
       nameLable.remove();
       nameButton.remove();
